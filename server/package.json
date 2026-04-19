@@ -1,0 +1,13 @@
+{
+  "name": "server",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "build": "echo \"build step will be added later\"",
+    "lint": "echo \"lint step will be added later\"",
+    "format": "echo \"format step will be added later\""
+  }
+}
