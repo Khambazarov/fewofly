@@ -8,12 +8,14 @@ type LoginCardProps = {
   theme: Theme;
   selectedRole: LoginRole;
   onSelectRole: (role: LoginRole) => void;
+  description: string;
 };
 
 export default function LoginCard({
   theme,
   selectedRole,
   onSelectRole,
+  description,
 }: LoginCardProps) {
   const cardClassName =
     theme === "dark"
@@ -41,24 +43,22 @@ export default function LoginCard({
           theme={theme}
         />
 
-        <p className={descriptionClassName}>
-          Sign in to access internal inquiry and operations workflows.
-        </p>
+        <p className={descriptionClassName}>{description}</p>
 
         <form className="space-y-4">
           <TextInput
-            theme={theme}
             id="username"
             label="Username"
             placeholder="Enter your username"
+            theme={theme}
           />
 
           <TextInput
-            theme={theme}
             id="password"
             label="Password"
             type="password"
             placeholder="Enter your password"
+            theme={theme}
           />
 
           <PrimaryButton theme={theme}>Login</PrimaryButton>

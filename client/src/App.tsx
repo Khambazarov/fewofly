@@ -4,6 +4,7 @@ import LoginCard from "./components/LoginCard";
 import ThemeToggleButton from "./components/ThemeToggleButton";
 import { useTheme } from "./hooks/useTheme";
 import type { LoginRole } from "./lib/auth";
+import { getLoginDescription } from "./lib/login";
 
 export default function App() {
   const { theme, setTheme } = useTheme();
@@ -29,6 +30,7 @@ export default function App() {
         theme={theme}
         selectedRole={selectedRole}
         onSelectRole={setSelectedRole}
+        description={getLoginDescription(selectedRole)}
       />
     </AppShell>
   );
