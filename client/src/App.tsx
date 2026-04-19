@@ -5,20 +5,32 @@ import ThemeToggleButton from "./components/ThemeToggleButton";
 import { useLoginForm } from "./hooks/useLoginForm";
 import { useTheme } from "./hooks/useTheme";
 import type { LoginRole } from "./lib/auth";
-import { getLoginDescription } from "./lib/login";
-import { LOGIN_VALIDATION_MESSAGE } from "./lib/messages";
-import { isLoginFormValid } from "./lib/validation";
 import { getLoginButtonLabel } from "./lib/auth-messages";
 import {
-  getUsernamePlaceholder,
   getPasswordPlaceholder,
+  getUsernamePlaceholder,
 } from "./lib/auth-placeholders";
+import { getLoginDescription } from "./lib/login";
+import { isLoginButtonDisabled } from "./lib/login-button";
+import {
+  USERNAME_VALIDATION_MESSAGE,
+  PASSWORD_VALIDATION_MESSAGE,
+} from "./lib/messages";
+import { isLoginFormValid } from "./lib/validation";
 
 export default function App() {
   const { theme, setTheme } = useTheme();
   const [selectedRole, setSelectedRole] = useState<LoginRole>("employee");
-  const [showValidationMessage, setShowValidationMessage] = useState(false);
-  const { username, password, setUsername, setPassword } = useLoginForm();
+  const {
+    username,
+    password,
+    usernameTouched,
+    passwordTouched,
+    setUsername,
+    setPassword,
+    setUsernameTouched,
+    setPasswordTouched,
+  } = useLoginForm();
 
   function handleToggleTheme() {
     setTheme(theme === "light" ? "dark" : "light");
@@ -29,9 +41,23 @@ export default function App() {
   ) {
     event.preventDefault();
 
-    const isValid = isLoginFormValid(username, password);
-    setShowValidationMessage(!isValid);
+    setUsernameTouched(true);
+    setPasswordTouched(true);
+
+    if (!isLoginFormValid(username, password)) {
+      return;
+    }
   }
+
+  const usernameValidationMessage =
+    usernameTouched && username.trim().length < 3
+      ? USERNAME_VALIDATION_MESSAGE
+      : undefined;
+
+  const passwordValidationMessage =
+    passwordTouched && password.trim().length < 8
+      ? PASSWORD_VALIDATION_MESSAGE
+      : undefined;
 
   return (
     <AppShell theme={theme}>
@@ -54,13 +80,15 @@ export default function App() {
         password={password}
         onUsernameChange={setUsername}
         onPasswordChange={setPassword}
-        validationMessage={
-          showValidationMessage ? LOGIN_VALIDATION_MESSAGE : undefined
-        }
+        onUsernameBlur={() => setUsernameTouched(true)}
+        onPasswordBlur={() => setPasswordTouched(true)}
+        usernameValidationMessage={usernameValidationMessage}
+        passwordValidationMessage={passwordValidationMessage}
         onSubmit={handleSubmit}
         buttonLabel={getLoginButtonLabel(selectedRole)}
         usernamePlaceholder={getUsernamePlaceholder(selectedRole)}
         passwordPlaceholder={getPasswordPlaceholder(selectedRole)}
+        isButtonDisabled={isLoginButtonDisabled(username, password)}
       />
     </AppShell>
   );

@@ -1,4 +1,5 @@
 import type { Theme } from "../lib/theme";
+import FormMessage from "./FormMessage";
 
 type TextInputProps = {
   id: string;
@@ -8,6 +9,8 @@ type TextInputProps = {
   theme: Theme;
   value: string;
   onChange: (value: string) => void;
+  onBlur?: () => void;
+  validationMessage?: string;
 };
 
 export default function TextInput({
@@ -18,6 +21,8 @@ export default function TextInput({
   theme,
   value,
   onChange,
+  onBlur,
+  validationMessage,
 }: TextInputProps) {
   const labelClassName =
     theme === "dark"
@@ -43,7 +48,10 @@ export default function TextInput({
         className={inputClassName}
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        onBlur={onBlur}
       />
+
+      {validationMessage ? <FormMessage message={validationMessage} /> : null}
     </div>
   );
 }

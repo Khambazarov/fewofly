@@ -3,7 +3,6 @@ import type { LoginRole } from "../lib/auth";
 import RoleSwitch from "./RoleSwitch";
 import TextInput from "./TextInput";
 import PrimaryButton from "./PrimaryButton";
-import FormMessage from "./FormMessage";
 
 type LoginCardProps = {
   theme: Theme;
@@ -14,11 +13,15 @@ type LoginCardProps = {
   password: string;
   onUsernameChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
-  validationMessage?: string;
+  onUsernameBlur: () => void;
+  onPasswordBlur: () => void;
+  usernameValidationMessage?: string;
+  passwordValidationMessage?: string;
   onSubmit: React.ComponentProps<"form">["onSubmit"];
   buttonLabel: string;
   usernamePlaceholder: string;
   passwordPlaceholder: string;
+  isButtonDisabled: boolean;
 };
 
 export default function LoginCard({
@@ -30,11 +33,15 @@ export default function LoginCard({
   password,
   onUsernameChange,
   onPasswordChange,
-  validationMessage,
+  onUsernameBlur,
+  onPasswordBlur,
+  usernameValidationMessage,
+  passwordValidationMessage,
   onSubmit,
   buttonLabel,
   usernamePlaceholder,
-  passwordPlaceholder
+  passwordPlaceholder,
+  isButtonDisabled,
 }: LoginCardProps) {
   const cardClassName =
     theme === "dark"
@@ -72,6 +79,8 @@ export default function LoginCard({
             theme={theme}
             value={username}
             onChange={onUsernameChange}
+            onBlur={onUsernameBlur}
+            validationMessage={usernameValidationMessage}
           />
 
           <TextInput
@@ -82,13 +91,13 @@ export default function LoginCard({
             theme={theme}
             value={password}
             onChange={onPasswordChange}
+            onBlur={onPasswordBlur}
+            validationMessage={passwordValidationMessage}
           />
 
-          {validationMessage ? (
-            <FormMessage message={validationMessage} />
-          ) : null}
-
-          <PrimaryButton theme={theme}>{buttonLabel}</PrimaryButton>
+          <PrimaryButton theme={theme} disabled={isButtonDisabled}>
+            {buttonLabel}
+          </PrimaryButton>
         </form>
       </div>
     </section>
