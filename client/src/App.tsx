@@ -9,6 +9,10 @@ import { getLoginDescription } from "./lib/login";
 import { LOGIN_VALIDATION_MESSAGE } from "./lib/messages";
 import { isLoginFormValid } from "./lib/validation";
 import { getLoginButtonLabel } from "./lib/auth-messages";
+import {
+  getUsernamePlaceholder,
+  getPasswordPlaceholder,
+} from "./lib/auth-placeholders";
 
 export default function App() {
   const { theme, setTheme } = useTheme();
@@ -20,7 +24,9 @@ export default function App() {
     setTheme(theme === "light" ? "dark" : "light");
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(
+    event: Parameters<NonNullable<React.ComponentProps<"form">["onSubmit"]>>[0],
+  ) {
     event.preventDefault();
 
     const isValid = isLoginFormValid(username, password);
@@ -53,6 +59,8 @@ export default function App() {
         }
         onSubmit={handleSubmit}
         buttonLabel={getLoginButtonLabel(selectedRole)}
+        usernamePlaceholder={getUsernamePlaceholder(selectedRole)}
+        passwordPlaceholder={getPasswordPlaceholder(selectedRole)}
       />
     </AppShell>
   );

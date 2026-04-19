@@ -17,6 +17,8 @@ type LoginCardProps = {
   validationMessage?: string;
   onSubmit: React.ComponentProps<"form">["onSubmit"];
   buttonLabel: string;
+  usernamePlaceholder: string;
+  passwordPlaceholder: string;
 };
 
 export default function LoginCard({
@@ -31,6 +33,8 @@ export default function LoginCard({
   validationMessage,
   onSubmit,
   buttonLabel,
+  usernamePlaceholder,
+  passwordPlaceholder
 }: LoginCardProps) {
   const cardClassName =
     theme === "dark"
@@ -64,7 +68,7 @@ export default function LoginCard({
           <TextInput
             id="username"
             label="Username"
-            placeholder="Enter your username"
+            placeholder={usernamePlaceholder}
             theme={theme}
             value={username}
             onChange={onUsernameChange}
@@ -74,7 +78,7 @@ export default function LoginCard({
             id="password"
             label="Password"
             type="password"
-            placeholder="Enter your password"
+            placeholder={passwordPlaceholder}
             theme={theme}
             value={password}
             onChange={onPasswordChange}
