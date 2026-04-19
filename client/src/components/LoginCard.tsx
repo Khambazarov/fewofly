@@ -1,6 +1,7 @@
 import type { Theme } from "../lib/theme";
 import type { LoginRole } from "../lib/auth";
 import RoleSwitch from "./RoleSwitch";
+import TextInput from "./TextInput";
 
 type LoginCardProps = {
   theme: Theme;
@@ -42,6 +43,21 @@ export default function LoginCard({
         <p className={descriptionClassName}>
           Sign in to access internal inquiry and operations workflows.
         </p>
+
+        <form className="space-y-4">
+          <TextInput
+            id="username"
+            label="Username"
+            placeholder="Enter your username"
+          />
+
+          <TextInput
+            id="password"
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+          />
+        </form>
       </div>
     </section>
   );
