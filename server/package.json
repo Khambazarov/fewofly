@@ -5,13 +5,14 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "node --watch --experimental-strip-types src/index.ts",
+    "dev": "tsx --watch src/index.ts",
     "build": "tsc",
     "lint": "echo \"lint step will be added later\"",
     "format": "echo \"format step will be added later\""
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.2"
   }
 }

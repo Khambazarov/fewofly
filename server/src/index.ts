@@ -1,1 +1,5 @@
-console.log("Server workspace initialized");
+import { createApp } from "./app";
+
+const app = createApp();
+
+console.log(`${app.name} initialized`);
