@@ -2,6 +2,7 @@ import type { Theme } from "../lib/theme";
 import type { LoginRole } from "../lib/auth";
 import RoleSwitch from "./RoleSwitch";
 import TextInput from "./TextInput";
+import PrimaryButton from "./PrimaryButton";
 
 type LoginCardProps = {
   theme: Theme;
@@ -46,17 +47,21 @@ export default function LoginCard({
 
         <form className="space-y-4">
           <TextInput
+            theme={theme}
             id="username"
             label="Username"
             placeholder="Enter your username"
           />
 
           <TextInput
+            theme={theme}
             id="password"
             label="Password"
             type="password"
             placeholder="Enter your password"
           />
+
+          <PrimaryButton theme={theme}>Login</PrimaryButton>
         </form>
       </div>
     </section>
