@@ -8,6 +8,7 @@ import type { LoginRole } from "./lib/auth";
 import { getLoginDescription } from "./lib/login";
 import { LOGIN_VALIDATION_MESSAGE } from "./lib/messages";
 import { isLoginFormValid } from "./lib/validation";
+import { getLoginButtonLabel } from "./lib/auth-messages";
 
 export default function App() {
   const { theme, setTheme } = useTheme();
@@ -51,6 +52,7 @@ export default function App() {
           showValidationMessage ? LOGIN_VALIDATION_MESSAGE : undefined
         }
         onSubmit={handleSubmit}
+        buttonLabel={getLoginButtonLabel(selectedRole)}
       />
     </AppShell>
   );

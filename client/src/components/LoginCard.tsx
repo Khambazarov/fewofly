@@ -16,6 +16,7 @@ type LoginCardProps = {
   onPasswordChange: (value: string) => void;
   validationMessage?: string;
   onSubmit: React.ComponentProps<"form">["onSubmit"];
+  buttonLabel: string;
 };
 
 export default function LoginCard({
@@ -29,6 +30,7 @@ export default function LoginCard({
   onPasswordChange,
   validationMessage,
   onSubmit,
+  buttonLabel,
 }: LoginCardProps) {
   const cardClassName =
     theme === "dark"
@@ -82,7 +84,7 @@ export default function LoginCard({
             <FormMessage message={validationMessage} />
           ) : null}
 
-          <PrimaryButton theme={theme}>Login</PrimaryButton>
+          <PrimaryButton theme={theme}>{buttonLabel}</PrimaryButton>
         </form>
       </div>
     </section>
