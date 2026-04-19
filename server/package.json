@@ -5,9 +5,13 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "node --watch src/index.js",
-    "build": "echo \"build step will be added later\"",
+    "dev": "node --watch --experimental-strip-types src/index.ts",
+    "build": "tsc",
     "lint": "echo \"lint step will be added later\"",
     "format": "echo \"format step will be added later\""
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
   }
 }
