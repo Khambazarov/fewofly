@@ -3,12 +3,19 @@ import type { LoginRole } from "../lib/auth";
 import RoleSwitch from "./RoleSwitch";
 import TextInput from "./TextInput";
 import PrimaryButton from "./PrimaryButton";
+import FormMessage from "./FormMessage";
 
 type LoginCardProps = {
   theme: Theme;
   selectedRole: LoginRole;
   onSelectRole: (role: LoginRole) => void;
   description: string;
+  username: string;
+  password: string;
+  onUsernameChange: (value: string) => void;
+  onPasswordChange: (value: string) => void;
+  validationMessage?: string;
+  onSubmit: React.ComponentProps<"form">["onSubmit"];
 };
 
 export default function LoginCard({
@@ -16,6 +23,12 @@ export default function LoginCard({
   selectedRole,
   onSelectRole,
   description,
+  username,
+  password,
+  onUsernameChange,
+  onPasswordChange,
+  validationMessage,
+  onSubmit,
 }: LoginCardProps) {
   const cardClassName =
     theme === "dark"
@@ -45,12 +58,14 @@ export default function LoginCard({
 
         <p className={descriptionClassName}>{description}</p>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={onSubmit}>
           <TextInput
             id="username"
             label="Username"
             placeholder="Enter your username"
             theme={theme}
+            value={username}
+            onChange={onUsernameChange}
           />
 
           <TextInput
@@ -59,7 +74,13 @@ export default function LoginCard({
             type="password"
             placeholder="Enter your password"
             theme={theme}
+            value={password}
+            onChange={onPasswordChange}
           />
+
+          {validationMessage ? (
+            <FormMessage message={validationMessage} />
+          ) : null}
 
           <PrimaryButton theme={theme}>Login</PrimaryButton>
         </form>

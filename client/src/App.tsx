@@ -2,16 +2,28 @@ import { useState } from "react";
 import AppShell from "./components/AppShell";
 import LoginCard from "./components/LoginCard";
 import ThemeToggleButton from "./components/ThemeToggleButton";
+import { useLoginForm } from "./hooks/useLoginForm";
 import { useTheme } from "./hooks/useTheme";
 import type { LoginRole } from "./lib/auth";
 import { getLoginDescription } from "./lib/login";
+import { LOGIN_VALIDATION_MESSAGE } from "./lib/messages";
+import { isLoginFormValid } from "./lib/validation";
 
 export default function App() {
   const { theme, setTheme } = useTheme();
   const [selectedRole, setSelectedRole] = useState<LoginRole>("employee");
+  const [showValidationMessage, setShowValidationMessage] = useState(false);
+  const { username, password, setUsername, setPassword } = useLoginForm();
 
   function handleToggleTheme() {
     setTheme(theme === "light" ? "dark" : "light");
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const isValid = isLoginFormValid(username, password);
+    setShowValidationMessage(!isValid);
   }
 
   return (
@@ -31,6 +43,14 @@ export default function App() {
         selectedRole={selectedRole}
         onSelectRole={setSelectedRole}
         description={getLoginDescription(selectedRole)}
+        username={username}
+        password={password}
+        onUsernameChange={setUsername}
+        onPasswordChange={setPassword}
+        validationMessage={
+          showValidationMessage ? LOGIN_VALIDATION_MESSAGE : undefined
+        }
+        onSubmit={handleSubmit}
       />
     </AppShell>
   );

@@ -6,6 +6,8 @@ type TextInputProps = {
   type?: "text" | "password";
   placeholder?: string;
   theme: Theme;
+  value: string;
+  onChange: (value: string) => void;
 };
 
 export default function TextInput({
@@ -14,6 +16,8 @@ export default function TextInput({
   type = "text",
   placeholder,
   theme,
+  value,
+  onChange,
 }: TextInputProps) {
   const labelClassName =
     theme === "dark"
@@ -37,6 +41,8 @@ export default function TextInput({
         type={type}
         placeholder={placeholder}
         className={inputClassName}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
       />
     </div>
   );
