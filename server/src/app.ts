@@ -1,5 +1,11 @@
+import express from "express";
+
 export function createApp() {
-  return {
-    name: "FewoFly Internal Tool API",
-  };
+  const app = express();
+
+  app.get("/health", (_request, response) => {
+    response.json({ status: "ok" });
+  });
+
+  return app;
 }

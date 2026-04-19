@@ -1,5 +1,8 @@
 import { createApp } from "./app";
 
 const app = createApp();
+const PORT = 4000;
 
-console.log(`${app.name} initialized`);
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});

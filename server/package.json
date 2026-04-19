@@ -11,8 +11,12 @@
     "format": "echo \"format step will be added later\""
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^24.3.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
