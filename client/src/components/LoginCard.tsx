@@ -17,11 +17,13 @@ type LoginCardProps = {
   onPasswordBlur: () => void;
   usernameValidationMessage?: string;
   passwordValidationMessage?: string;
+  requestErrorMessage?: string;
   onSubmit: React.ComponentProps<"form">["onSubmit"];
   buttonLabel: string;
   usernamePlaceholder: string;
   passwordPlaceholder: string;
   isButtonDisabled: boolean;
+  isLoading: boolean;
 };
 
 export default function LoginCard({
@@ -37,11 +39,13 @@ export default function LoginCard({
   onPasswordBlur,
   usernameValidationMessage,
   passwordValidationMessage,
+  requestErrorMessage,
   onSubmit,
   buttonLabel,
   usernamePlaceholder,
   passwordPlaceholder,
   isButtonDisabled,
+  isLoading,
 }: LoginCardProps) {
   const cardClassName =
     theme === "dark"
@@ -57,6 +61,9 @@ export default function LoginCard({
     theme === "dark"
       ? "text-center text-sm text-slate-400"
       : "text-center text-sm text-slate-600";
+
+  const errorClassName =
+    theme === "dark" ? "text-sm text-rose-400" : "text-sm text-rose-600";
 
   return (
     <section className={cardClassName}>
@@ -95,7 +102,15 @@ export default function LoginCard({
             validationMessage={passwordValidationMessage}
           />
 
-          <PrimaryButton theme={theme} disabled={isButtonDisabled}>
+          {requestErrorMessage ? (
+            <p className={errorClassName}>{requestErrorMessage}</p>
+          ) : null}
+
+          <PrimaryButton
+            theme={theme}
+            disabled={isButtonDisabled}
+            isLoading={isLoading}
+          >
             {buttonLabel}
           </PrimaryButton>
         </form>

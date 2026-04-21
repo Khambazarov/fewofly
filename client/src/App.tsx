@@ -3,6 +3,7 @@ import AppShell from "./components/AppShell";
 import LoginCard from "./components/LoginCard";
 import ThemeToggleButton from "./components/ThemeToggleButton";
 import { useLoginForm } from "./hooks/useLoginForm";
+import { useLoginRequest } from "./hooks/useLoginRequest";
 import { useTheme } from "./hooks/useTheme";
 import type { LoginRole } from "./lib/auth";
 import { getLoginButtonLabel } from "./lib/auth-messages";
@@ -13,8 +14,8 @@ import {
 import { getLoginDescription } from "./lib/login";
 import { isLoginButtonDisabled } from "./lib/login-button";
 import {
-  USERNAME_VALIDATION_MESSAGE,
   PASSWORD_VALIDATION_MESSAGE,
+  USERNAME_VALIDATION_MESSAGE,
 } from "./lib/messages";
 import { isLoginFormValid } from "./lib/validation";
 
@@ -31,12 +32,13 @@ export default function App() {
     setUsernameTouched,
     setPasswordTouched,
   } = useLoginForm();
+  const { isLoading, errorMessage, submitLogin } = useLoginRequest();
 
   function handleToggleTheme() {
     setTheme(theme === "light" ? "dark" : "light");
   }
 
-  function handleSubmit(
+  async function handleSubmit(
     event: Parameters<NonNullable<React.ComponentProps<"form">["onSubmit"]>>[0],
   ) {
     event.preventDefault();
@@ -47,6 +49,8 @@ export default function App() {
     if (!isLoginFormValid(username, password)) {
       return;
     }
+
+    await submitLogin(username, password);
   }
 
   const usernameValidationMessage =
@@ -84,11 +88,13 @@ export default function App() {
         onPasswordBlur={() => setPasswordTouched(true)}
         usernameValidationMessage={usernameValidationMessage}
         passwordValidationMessage={passwordValidationMessage}
+        requestErrorMessage={errorMessage}
         onSubmit={handleSubmit}
         buttonLabel={getLoginButtonLabel(selectedRole)}
         usernamePlaceholder={getUsernamePlaceholder(selectedRole)}
         passwordPlaceholder={getPasswordPlaceholder(selectedRole)}
         isButtonDisabled={isLoginButtonDisabled(username, password)}
+        isLoading={isLoading}
       />
     </AppShell>
   );
