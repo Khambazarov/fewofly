@@ -9,7 +9,8 @@
     "build": "tsc",
     "lint": "echo \"lint step will be added later\"",
     "format": "echo \"format step will be added later\"",
-    "seed:supervisor": "tsx src/seed-supervisor.ts"
+    "seed:supervisor": "tsx src/seed-supervisor.ts",
+    "test:password": "tsx src/test-password.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
