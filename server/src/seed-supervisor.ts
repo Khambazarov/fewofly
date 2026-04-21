@@ -1,4 +1,5 @@
 import "dotenv/config";
+import bcrypt from "bcrypt";
 import { prisma } from "./db";
 
 async function main() {
@@ -13,10 +14,12 @@ async function main() {
     return;
   }
 
+  const passwordHash = await bcrypt.hash("0123456789", 10);
+
   await prisma.user.create({
     data: {
       username: "supervisor",
-      passwordHash: "TEMP_HASH",
+      passwordHash,
       role: "supervisor",
       isActive: true,
     },
