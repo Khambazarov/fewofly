@@ -8,7 +8,8 @@
     "dev": "tsx --watch src/index.ts",
     "build": "tsc",
     "lint": "echo \"lint step will be added later\"",
-    "format": "echo \"format step will be added later\""
+    "format": "echo \"format step will be added later\"",
+    "seed:supervisor": "tsx src/seed-supervisor.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

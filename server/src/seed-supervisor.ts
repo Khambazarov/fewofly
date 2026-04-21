@@ -1,0 +1,35 @@
+import "dotenv/config";
+import { prisma } from "./db";
+
+async function main() {
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      username: "supervisor",
+    },
+  });
+
+  if (existingUser) {
+    console.log("Supervisor user already exists");
+    return;
+  }
+
+  await prisma.user.create({
+    data: {
+      username: "supervisor",
+      passwordHash: "TEMP_HASH",
+      role: "supervisor",
+      isActive: true,
+    },
+  });
+
+  console.log("Supervisor user created");
+}
+
+main()
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
