@@ -1,16 +1,11 @@
 import { useState } from "react";
 import { getCurrentUserRequest } from "../lib/auth-api";
-
-type CurrentUser = {
-  id: string;
-  username: string;
-  role: string;
-};
+import type { CurrentUser } from "../lib/auth-types";
 
 export function useCurrentUser() {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
-  async function loadCurrentUser() {
+  async function loadCurrentUser(): Promise<CurrentUser | null> {
     try {
       const user = await getCurrentUserRequest();
       setCurrentUser(user);
@@ -23,6 +18,7 @@ export function useCurrentUser() {
 
   return {
     currentUser,
+    setCurrentUser,
     loadCurrentUser,
   };
 }

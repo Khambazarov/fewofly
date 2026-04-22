@@ -38,6 +38,7 @@ export default function App() {
 
   useEffect(() => {
     void loadCurrentUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleToggleTheme() {

@@ -1,11 +1,7 @@
-export type SessionUser = {
-  id: string;
-  username: string;
-  role: string;
-};
+import type { AuthUser } from "./routes/auth-types";
 
 declare module "express-session" {
   interface SessionData {
-    user?: SessionUser;
+    user?: AuthUser;
   }
 }

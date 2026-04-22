@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { loginRequest } from "../lib/auth-api";
-
-type LoginUser = {
-  id: string;
-  username: string;
-  role: string;
-};
+import type { CurrentUser } from "../lib/auth-types";
 
 export function useLoginRequest() {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,7 +9,7 @@ export function useLoginRequest() {
   async function submitLogin(
     username: string,
     password: string,
-  ): Promise<LoginUser | null> {
+  ): Promise<CurrentUser | null> {
     setIsLoading(true);
     setErrorMessage("");
 
