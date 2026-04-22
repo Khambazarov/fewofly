@@ -1,11 +1,20 @@
 import { useState } from "react";
 import { loginRequest } from "../lib/auth-api";
 
+type LoginUser = {
+  id: string;
+  username: string;
+  role: string;
+};
+
 export function useLoginRequest() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function submitLogin(username: string, password: string) {
+  async function submitLogin(
+    username: string,
+    password: string,
+  ): Promise<LoginUser | null> {
     setIsLoading(true);
     setErrorMessage("");
 

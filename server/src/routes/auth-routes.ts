@@ -1,3 +1,4 @@
+import "../session-data";
 import { Router } from "express";
 import { login } from "../login";
 
@@ -25,5 +26,18 @@ authRouter.post("/login", async (request, response) => {
     return;
   }
 
+  request.session.user = user;
+
   response.json(user);
+});
+
+authRouter.get("/me", (request, response) => {
+  if (!request.session.user) {
+    response.status(401).json({
+      message: "Not authenticated.",
+    });
+    return;
+  }
+
+  response.json(request.session.user);
 });

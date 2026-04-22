@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppShell from "./components/AppShell";
 import LoginCard from "./components/LoginCard";
 import ThemeToggleButton from "./components/ThemeToggleButton";
+import { useCurrentUser } from "./hooks/useCurrentUser";
 import { useLoginForm } from "./hooks/useLoginForm";
 import { useLoginRequest } from "./hooks/useLoginRequest";
 import { useTheme } from "./hooks/useTheme";
@@ -33,6 +34,11 @@ export default function App() {
     setPasswordTouched,
   } = useLoginForm();
   const { isLoading, errorMessage, submitLogin } = useLoginRequest();
+  const { currentUser, loadCurrentUser } = useCurrentUser();
+
+  useEffect(() => {
+    void loadCurrentUser();
+  }, []);
 
   function handleToggleTheme() {
     setTheme(theme === "light" ? "dark" : "light");
@@ -50,7 +56,11 @@ export default function App() {
       return;
     }
 
-    await submitLogin(username, password);
+    const user = await submitLogin(username, password);
+
+    if (user) {
+      await loadCurrentUser();
+    }
   }
 
   const usernameValidationMessage =
@@ -75,27 +85,39 @@ export default function App() {
         </h1>
       </header>
 
-      <LoginCard
-        theme={theme}
-        selectedRole={selectedRole}
-        onSelectRole={setSelectedRole}
-        description={getLoginDescription(selectedRole)}
-        username={username}
-        password={password}
-        onUsernameChange={setUsername}
-        onPasswordChange={setPassword}
-        onUsernameBlur={() => setUsernameTouched(true)}
-        onPasswordBlur={() => setPasswordTouched(true)}
-        usernameValidationMessage={usernameValidationMessage}
-        passwordValidationMessage={passwordValidationMessage}
-        requestErrorMessage={errorMessage}
-        onSubmit={handleSubmit}
-        buttonLabel={getLoginButtonLabel(selectedRole)}
-        usernamePlaceholder={getUsernamePlaceholder(selectedRole)}
-        passwordPlaceholder={getPasswordPlaceholder(selectedRole)}
-        isButtonDisabled={isLoginButtonDisabled(username, password)}
-        isLoading={isLoading}
-      />
+      {currentUser ? (
+        <section className="mx-auto mt-16 max-w-md rounded-2xl border border-emerald-600/30 bg-emerald-500/10 p-6">
+          <div className="space-y-2 text-center">
+            <h2 className="text-2xl font-semibold">Logged in</h2>
+            <p>
+              Welcome, <strong>{currentUser.username}</strong>.
+            </p>
+            <p>Your role is {currentUser.role}.</p>
+          </div>
+        </section>
+      ) : (
+        <LoginCard
+          theme={theme}
+          selectedRole={selectedRole}
+          onSelectRole={setSelectedRole}
+          description={getLoginDescription(selectedRole)}
+          username={username}
+          password={password}
+          onUsernameChange={setUsername}
+          onPasswordChange={setPassword}
+          onUsernameBlur={() => setUsernameTouched(true)}
+          onPasswordBlur={() => setPasswordTouched(true)}
+          usernameValidationMessage={usernameValidationMessage}
+          passwordValidationMessage={passwordValidationMessage}
+          requestErrorMessage={errorMessage}
+          onSubmit={handleSubmit}
+          buttonLabel={getLoginButtonLabel(selectedRole)}
+          usernamePlaceholder={getUsernamePlaceholder(selectedRole)}
+          passwordPlaceholder={getPasswordPlaceholder(selectedRole)}
+          isButtonDisabled={isLoginButtonDisabled(username, password)}
+          isLoading={isLoading}
+        />
+      )}
     </AppShell>
   );
 }
