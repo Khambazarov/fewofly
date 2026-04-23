@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import AppShell from "./components/AppShell";
+import LoggedInCard from "./components/LoggedInCard";
 import LoginCard from "./components/LoginCard";
 import ThemeToggleButton from "./components/ThemeToggleButton";
 import { useCurrentUser } from "./hooks/useCurrentUser";
 import { useLoginForm } from "./hooks/useLoginForm";
 import { useLoginRequest } from "./hooks/useLoginRequest";
+import { useLogout } from "./hooks/useLogout";
 import { useTheme } from "./hooks/useTheme";
 import type { LoginRole } from "./lib/auth";
 import { getLoginButtonLabel } from "./lib/auth-messages";
@@ -34,11 +36,11 @@ export default function App() {
     setPasswordTouched,
   } = useLoginForm();
   const { isLoading, errorMessage, submitLogin } = useLoginRequest();
-  const { currentUser, loadCurrentUser } = useCurrentUser();
+  const { isLoggingOut, submitLogout } = useLogout();
+  const { currentUser, setCurrentUser, loadCurrentUser } = useCurrentUser();
 
   useEffect(() => {
     void loadCurrentUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleToggleTheme() {
@@ -61,6 +63,14 @@ export default function App() {
 
     if (user) {
       await loadCurrentUser();
+    }
+  }
+
+  async function handleLogout() {
+    const success = await submitLogout();
+
+    if (success) {
+      setCurrentUser(null);
     }
   }
 
@@ -87,15 +97,12 @@ export default function App() {
       </header>
 
       {currentUser ? (
-        <section className="mx-auto mt-16 max-w-md rounded-2xl border border-emerald-600/30 bg-emerald-500/10 p-6">
-          <div className="space-y-2 text-center">
-            <h2 className="text-2xl font-semibold">Logged in</h2>
-            <p>
-              Welcome, <strong>{currentUser.username}</strong>.
-            </p>
-            <p>Your role is {currentUser.role}.</p>
-          </div>
-        </section>
+        <LoggedInCard
+          theme={theme}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+          isLoggingOut={isLoggingOut}
+        />
       ) : (
         <LoginCard
           theme={theme}

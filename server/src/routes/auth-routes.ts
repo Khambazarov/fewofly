@@ -41,3 +41,20 @@ authRouter.get("/me", (request, response) => {
 
   response.json(request.session.user);
 });
+
+authRouter.post("/logout", (request, response) => {
+  request.session.destroy((error) => {
+    if (error) {
+      response.status(500).json({
+        message: "Logout failed.",
+      });
+      return;
+    }
+
+    response.clearCookie("connect.sid");
+
+    response.json({
+      message: "Logged out successfully.",
+    });
+  });
+});
