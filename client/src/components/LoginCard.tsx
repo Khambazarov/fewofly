@@ -1,13 +1,9 @@
 import type { Theme } from "../lib/theme";
-import type { LoginRole } from "../lib/auth";
-import RoleSwitch from "./RoleSwitch";
 import TextInput from "./TextInput";
 import PrimaryButton from "./PrimaryButton";
 
 type LoginCardProps = {
   theme: Theme;
-  selectedRole: LoginRole;
-  onSelectRole: (role: LoginRole) => void;
   description: string;
   username: string;
   password: string;
@@ -28,8 +24,6 @@ type LoginCardProps = {
 
 export default function LoginCard({
   theme,
-  selectedRole,
-  onSelectRole,
   description,
   username,
   password,
@@ -69,12 +63,6 @@ export default function LoginCard({
     <section className={cardClassName}>
       <div className="space-y-5">
         <h2 className={titleClassName}>Login</h2>
-
-        <RoleSwitch
-          selectedRole={selectedRole}
-          onSelectRole={onSelectRole}
-          theme={theme}
-        />
 
         <p className={descriptionClassName}>{description}</p>
 

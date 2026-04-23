@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import AppShell from "./components/AppShell";
 import LoggedInCard from "./components/LoggedInCard";
 import LoginCard from "./components/LoginCard";
@@ -11,23 +11,15 @@ import { useLogout } from "./hooks/useLogout";
 import { useProtectedDashboard } from "./hooks/useProtectedDashboard";
 import { useSupervisorArea } from "./hooks/useSupervisorArea";
 import { useTheme } from "./hooks/useTheme";
-import type { LoginRole } from "./lib/auth";
-import { getLoginButtonLabel } from "./lib/auth-messages";
-import {
-  getPasswordPlaceholder,
-  getUsernamePlaceholder,
-} from "./lib/auth-placeholders";
-import { getLoginDescription } from "./lib/login";
-import { isLoginButtonDisabled } from "./lib/login-button";
 import {
   PASSWORD_VALIDATION_MESSAGE,
   USERNAME_VALIDATION_MESSAGE,
 } from "./lib/messages";
+import { isLoginButtonDisabled } from "./lib/login-button";
 import { isLoginFormValid } from "./lib/validation";
 
 export default function App() {
   const { theme, setTheme } = useTheme();
-  const [selectedRole, setSelectedRole] = useState<LoginRole>("employee");
   const {
     username,
     password,
@@ -38,6 +30,7 @@ export default function App() {
     setUsernameTouched,
     setPasswordTouched,
   } = useLoginForm();
+
   const { isLoading, errorMessage, submitLogin } = useLoginRequest();
   const { isLoggingOut, submitLogout } = useLogout();
   const { currentUser, setCurrentUser, loadCurrentUser } = useCurrentUser();
@@ -142,9 +135,7 @@ export default function App() {
       ) : (
         <LoginCard
           theme={theme}
-          selectedRole={selectedRole}
-          onSelectRole={setSelectedRole}
-          description={getLoginDescription(selectedRole)}
+          description="Sign in to access your internal workspace."
           username={username}
           password={password}
           onUsernameChange={setUsername}
@@ -155,9 +146,9 @@ export default function App() {
           passwordValidationMessage={passwordValidationMessage}
           requestErrorMessage={errorMessage}
           onSubmit={handleSubmit}
-          buttonLabel={getLoginButtonLabel(selectedRole)}
-          usernamePlaceholder={getUsernamePlaceholder(selectedRole)}
-          passwordPlaceholder={getPasswordPlaceholder(selectedRole)}
+          buttonLabel="Login"
+          usernamePlaceholder="Enter your username"
+          passwordPlaceholder="Enter your password"
           isButtonDisabled={isLoginButtonDisabled(username, password)}
           isLoading={isLoading}
         />
