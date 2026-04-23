@@ -8,6 +8,7 @@ import { useLoginForm } from "./hooks/useLoginForm";
 import { useLoginRequest } from "./hooks/useLoginRequest";
 import { useLogout } from "./hooks/useLogout";
 import { useProtectedDashboard } from "./hooks/useProtectedDashboard";
+import { useSupervisorArea } from "./hooks/useSupervisorArea";
 import { useTheme } from "./hooks/useTheme";
 import type { LoginRole } from "./lib/auth";
 import { getLoginButtonLabel } from "./lib/auth-messages";
@@ -40,6 +41,7 @@ export default function App() {
   const { isLoggingOut, submitLogout } = useLogout();
   const { currentUser, setCurrentUser, loadCurrentUser } = useCurrentUser();
   const { dashboardData, loadProtectedDashboard } = useProtectedDashboard();
+  const { supervisorAreaData, loadSupervisorArea } = useSupervisorArea();
 
   useEffect(() => {
     async function initializeUserSession() {
@@ -47,6 +49,10 @@ export default function App() {
 
       if (user) {
         await loadProtectedDashboard();
+
+        if (user.role === "supervisor") {
+          await loadSupervisorArea();
+        }
       }
     }
 
@@ -75,6 +81,10 @@ export default function App() {
     if (user) {
       await loadCurrentUser();
       await loadProtectedDashboard();
+
+      if (user.role === "supervisor") {
+        await loadSupervisorArea();
+      }
     }
   }
 
@@ -116,6 +126,7 @@ export default function App() {
           onLogout={handleLogout}
           isLoggingOut={isLoggingOut}
           protectedMessage={dashboardData?.message}
+          supervisorMessage={supervisorAreaData?.message}
         />
       ) : (
         <LoginCard

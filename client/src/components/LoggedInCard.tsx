@@ -2,6 +2,7 @@ import type { Theme } from "../lib/theme";
 import type { CurrentUser } from "../lib/auth-types";
 import { getRoleLabel } from "../lib/role-labels";
 import DashboardCard from "./DashboardCard";
+import SupervisorAreaCard from "./SupervisorAreaCard";
 
 type LoggedInCardProps = {
   theme: Theme;
@@ -9,6 +10,7 @@ type LoggedInCardProps = {
   onLogout: () => void;
   isLoggingOut: boolean;
   protectedMessage?: string;
+  supervisorMessage?: string;
 };
 
 export default function LoggedInCard({
@@ -17,6 +19,7 @@ export default function LoggedInCard({
   onLogout,
   isLoggingOut,
   protectedMessage,
+  supervisorMessage,
 }: LoggedInCardProps) {
   const wrapperClassName = "mx-auto mt-16 max-w-3xl space-y-6";
 
@@ -68,6 +71,10 @@ export default function LoggedInCard({
         currentUser={currentUser}
         protectedMessage={protectedMessage}
       />
+
+      {currentUser.role === "supervisor" ? (
+        <SupervisorAreaCard theme={theme} message={supervisorMessage} />
+      ) : null}
     </div>
   );
 }
