@@ -3,6 +3,7 @@ import AppShell from "./components/AppShell";
 import LoggedInCard from "./components/LoggedInCard";
 import LoginCard from "./components/LoginCard";
 import ThemeToggleButton from "./components/ThemeToggleButton";
+import { useAdminArea } from "./hooks/useAdminArea";
 import { useCurrentUser } from "./hooks/useCurrentUser";
 import { useLoginForm } from "./hooks/useLoginForm";
 import { useLoginRequest } from "./hooks/useLoginRequest";
@@ -41,6 +42,7 @@ export default function App() {
   const { isLoggingOut, submitLogout } = useLogout();
   const { currentUser, setCurrentUser, loadCurrentUser } = useCurrentUser();
   const { dashboardData, loadProtectedDashboard } = useProtectedDashboard();
+  const { adminAreaData, loadAdminArea } = useAdminArea();
   const { supervisorAreaData, loadSupervisorArea } = useSupervisorArea();
 
   useEffect(() => {
@@ -49,6 +51,10 @@ export default function App() {
 
       if (user) {
         await loadProtectedDashboard();
+
+        if (user.role === "admin" || user.role === "supervisor") {
+          await loadAdminArea();
+        }
 
         if (user.role === "supervisor") {
           await loadSupervisorArea();
@@ -81,6 +87,10 @@ export default function App() {
     if (user) {
       await loadCurrentUser();
       await loadProtectedDashboard();
+
+      if (user.role === "admin" || user.role === "supervisor") {
+        await loadAdminArea();
+      }
 
       if (user.role === "supervisor") {
         await loadSupervisorArea();
@@ -126,6 +136,7 @@ export default function App() {
           onLogout={handleLogout}
           isLoggingOut={isLoggingOut}
           protectedMessage={dashboardData?.message}
+          adminMessage={adminAreaData?.message}
           supervisorMessage={supervisorAreaData?.message}
         />
       ) : (

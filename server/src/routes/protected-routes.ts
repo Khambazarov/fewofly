@@ -12,6 +12,17 @@ protectedRouter.get("/dashboard", requireAuth, (request, response) => {
 });
 
 protectedRouter.get(
+  "/admin",
+  requireRole(["admin", "supervisor"]),
+  (request, response) => {
+    response.json({
+      message: "Admin area loaded successfully.",
+      user: request.session.user,
+    });
+  },
+);
+
+protectedRouter.get(
   "/supervisor",
   requireRole(["supervisor"]),
   (request, response) => {
