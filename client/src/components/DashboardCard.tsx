@@ -5,11 +5,13 @@ import { getRoleLabel } from "../lib/role-labels";
 type DashboardCardProps = {
   theme: Theme;
   currentUser: CurrentUser;
+  protectedMessage?: string;
 };
 
 export default function DashboardCard({
   theme,
   currentUser,
+  protectedMessage,
 }: DashboardCardProps) {
   const cardClassName =
     theme === "dark"
@@ -30,6 +32,12 @@ export default function DashboardCard({
         <div className="space-y-2">
           <h2 className={titleClassName}>Dashboard</h2>
           <p className={textClassName}>Your current operations overview.</p>
+          {protectedMessage ? (
+            <p className={textClassName}>{protectedMessage}</p>
+          ) : null}
+          <p className={textClassName}>
+            Active role: <strong>{getRoleLabel(currentUser.role)}</strong>
+          </p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">

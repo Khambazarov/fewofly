@@ -7,6 +7,7 @@ import { useCurrentUser } from "./hooks/useCurrentUser";
 import { useLoginForm } from "./hooks/useLoginForm";
 import { useLoginRequest } from "./hooks/useLoginRequest";
 import { useLogout } from "./hooks/useLogout";
+import { useProtectedDashboard } from "./hooks/useProtectedDashboard";
 import { useTheme } from "./hooks/useTheme";
 import type { LoginRole } from "./lib/auth";
 import { getLoginButtonLabel } from "./lib/auth-messages";
@@ -38,9 +39,19 @@ export default function App() {
   const { isLoading, errorMessage, submitLogin } = useLoginRequest();
   const { isLoggingOut, submitLogout } = useLogout();
   const { currentUser, setCurrentUser, loadCurrentUser } = useCurrentUser();
+  const { dashboardData, loadProtectedDashboard } = useProtectedDashboard();
 
   useEffect(() => {
-    void loadCurrentUser();
+    async function initializeUserSession() {
+      const user = await loadCurrentUser();
+
+      if (user) {
+        await loadProtectedDashboard();
+      }
+    }
+
+    void initializeUserSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleToggleTheme() {
@@ -63,6 +74,7 @@ export default function App() {
 
     if (user) {
       await loadCurrentUser();
+      await loadProtectedDashboard();
     }
   }
 
@@ -71,6 +83,7 @@ export default function App() {
 
     if (success) {
       setCurrentUser(null);
+      window.location.reload();
     }
   }
 
@@ -102,6 +115,7 @@ export default function App() {
           currentUser={currentUser}
           onLogout={handleLogout}
           isLoggingOut={isLoggingOut}
+          protectedMessage={dashboardData?.message}
         />
       ) : (
         <LoginCard
