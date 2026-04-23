@@ -1,6 +1,7 @@
 import type { Theme } from "../lib/theme";
 import type { CurrentUser } from "../lib/auth-types";
 import DashboardCard from "./DashboardCard";
+import { getRoleLabel } from "../lib/role-labels";
 
 type LoggedInCardProps = {
   theme: Theme;
@@ -43,6 +44,9 @@ export default function LoggedInCard({
             <h2 className={titleClassName}>Logged in</h2>
             <p className={textClassName}>
               Welcome, <strong>{currentUser.username}</strong>.
+            </p>
+            <p className={textClassName}>
+              Role: {getRoleLabel(currentUser.role)}
             </p>
           </div>
 
