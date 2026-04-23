@@ -2,30 +2,34 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 import { prisma } from "./db";
 
-async function main() {
-  const existingUser = await prisma.user.findUnique({
-    where: {
-      username: "supervisor",
-    },
-  });
+const DEFAULT_PASSWORD = "0123456789";
 
-  if (existingUser) {
-    console.log("Supervisor user already exists");
-    return;
-  }
+async function upsertUser(username: string, role: string) {
+  const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
 
-  const passwordHash = await bcrypt.hash("0123456789", 10);
-
-  await prisma.user.create({
-    data: {
-      username: "supervisor",
+  await prisma.user.upsert({
+    where: { username },
+    update: {
       passwordHash,
-      role: "supervisor",
+      role,
+      isActive: true,
+    },
+    create: {
+      username,
+      passwordHash,
+      role,
       isActive: true,
     },
   });
+}
 
-  console.log("Supervisor user created");
+async function main() {
+  await upsertUser("supervisor", "supervisor");
+  await upsertUser("admin", "admin");
+  await upsertUser("employee1", "employee");
+  await upsertUser("employee2", "employee");
+
+  console.log("Seed users upserted successfully");
 }
 
 main()
