@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./api";
+import type { RequestStatus } from "./request-status";
 
 export type RequestItem = {
   id: string;
@@ -7,7 +8,7 @@ export type RequestItem = {
   phoneNumber: string;
   emailAddress: string;
   title: string;
-  status: string;
+  status: RequestStatus;
   dateFrom: string;
   dateTo: string;
   peopleCount: number;

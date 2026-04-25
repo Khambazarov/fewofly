@@ -2,6 +2,10 @@ import type { Theme } from "../lib/theme";
 import type { CurrentUser } from "../lib/auth-types";
 import { getRoleLabel } from "../lib/role-labels";
 import type { RequestItem } from "../lib/request-api";
+import {
+  formatRequestStatusLabel,
+  REQUEST_STATUSES,
+} from "../lib/request-status";
 
 type DashboardCardProps = {
   theme: Theme;
@@ -32,43 +36,39 @@ function truncateText(text: string, maxLength: number) {
 }
 
 function getStatusBadgeClassName(theme: Theme, status: string) {
-  const normalizedStatus = status.toLowerCase();
-
-  if (normalizedStatus === "new") {
+  if (status === REQUEST_STATUSES.NEW) {
     return theme === "dark"
       ? "inline-flex rounded-full border border-sky-700/40 bg-sky-500/10 px-2.5 py-1 text-xs font-semibold text-sky-300"
       : "inline-flex rounded-full border border-sky-600/30 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700";
   }
 
-  if (normalizedStatus === "open") {
+  if (status === REQUEST_STATUSES.OPEN) {
     return theme === "dark"
       ? "inline-flex rounded-full border border-emerald-700/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-300"
       : "inline-flex rounded-full border border-emerald-600/30 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700";
   }
 
-  if (normalizedStatus === "in_progress") {
+  if (status === REQUEST_STATUSES.IN_PROGRESS) {
     return theme === "dark"
       ? "inline-flex rounded-full border border-amber-700/40 bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-300"
       : "inline-flex rounded-full border border-amber-600/30 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700";
   }
 
-  if (normalizedStatus === "closed") {
+  if (status === REQUEST_STATUSES.CLOSED) {
     return theme === "dark"
       ? "inline-flex rounded-full border border-slate-700 bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-300"
       : "inline-flex rounded-full border border-slate-300 bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700";
   }
 
+  if (status === REQUEST_STATUSES.ASSIGNED) {
+    return theme === "dark"
+      ? "inline-flex rounded-full border border-violet-700/40 bg-violet-500/10 px-2.5 py-1 text-xs font-semibold text-violet-300"
+      : "inline-flex rounded-full border border-violet-600/30 bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700";
+  }
+
   return theme === "dark"
     ? "inline-flex rounded-full border border-slate-700 bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-300"
     : "inline-flex rounded-full border border-slate-300 bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700";
-}
-
-function formatStatusLabel(status: string) {
-  if (status === "in_progress") {
-    return "In Progress";
-  }
-
-  return status.charAt(0).toUpperCase() + status.slice(1);
 }
 
 export default function DashboardCard({
@@ -101,19 +101,19 @@ export default function DashboardCard({
   const latestRequests = requests.slice(0, 20);
 
   const newCount = requests.filter(
-    (request) => request.status === "new",
+    (request) => request.status === REQUEST_STATUSES.NEW,
   ).length;
   const openCount = requests.filter(
-    (request) => request.status === "open",
+    (request) => request.status === REQUEST_STATUSES.OPEN,
   ).length;
   const inProgressCount = requests.filter(
-    (request) => request.status === "in_progress",
+    (request) => request.status === REQUEST_STATUSES.IN_PROGRESS,
   ).length;
   const closedCount = requests.filter(
-    (request) => request.status === "closed",
+    (request) => request.status === REQUEST_STATUSES.CLOSED,
   ).length;
   const assignedCount = requests.filter(
-    (request) => request.status === "assigned",
+    (request) => request.status === REQUEST_STATUSES.ASSIGNED,
   ).length;
 
   return (
@@ -130,7 +130,7 @@ export default function DashboardCard({
           </p>
         </div>
 
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-6 text-center">
+        <div className="grid grid-cols-2 gap-4 text-center sm:grid-cols-6">
           <div className={helperCardClassName}>
             <p className={textClassName}>Requests</p>
             <p className="text-xl font-semibold">{requests.length}</p>
@@ -191,7 +191,7 @@ export default function DashboardCard({
                           request.status,
                         )}
                       >
-                        {formatStatusLabel(request.status)}
+                        {formatRequestStatusLabel(request.status)}
                       </span>
                     </div>
 
@@ -222,7 +222,8 @@ export default function DashboardCard({
                       </p>
 
                       <p className={mutedTextClassName}>
-                        Date: <strong>{formatDate(request.dateFrom)}</strong>-{" "}
+                        Date: <strong>{formatDate(request.dateFrom)}</strong>
+                        {" - "}
                         <strong>{formatDate(request.dateTo)}</strong>
                       </p>
 
