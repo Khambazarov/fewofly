@@ -1,5 +1,6 @@
 import type { Theme } from "../lib/theme";
 import type { CurrentUser } from "../lib/auth-types";
+import type { RequestItem } from "../lib/request-api";
 import { getRoleLabel } from "../lib/role-labels";
 import AdminAreaCard from "./AdminAreaCard";
 import DashboardCard from "./DashboardCard";
@@ -15,6 +16,7 @@ type LoggedInCardProps = {
   employeeMessage?: string;
   adminMessage?: string;
   supervisorMessage?: string;
+  requests: RequestItem[];
 };
 
 export default function LoggedInCard({
@@ -26,6 +28,7 @@ export default function LoggedInCard({
   employeeMessage,
   adminMessage,
   supervisorMessage,
+  requests,
 }: LoggedInCardProps) {
   const wrapperClassName = "mx-auto mt-16 max-w-3xl space-y-6";
 
@@ -76,6 +79,7 @@ export default function LoggedInCard({
         theme={theme}
         currentUser={currentUser}
         protectedMessage={protectedMessage}
+        requests={requests}
       />
 
       <EmployeeAreaCard theme={theme} message={employeeMessage} />

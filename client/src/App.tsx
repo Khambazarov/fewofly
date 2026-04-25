@@ -10,6 +10,7 @@ import { useLoginForm } from "./hooks/useLoginForm";
 import { useLoginRequest } from "./hooks/useLoginRequest";
 import { useLogout } from "./hooks/useLogout";
 import { useProtectedDashboard } from "./hooks/useProtectedDashboard";
+import { useRequests } from "./hooks/useRequests";
 import { useSupervisorArea } from "./hooks/useSupervisorArea";
 import { useTheme } from "./hooks/useTheme";
 import {
@@ -35,6 +36,7 @@ export default function App() {
   const { isLoggingOut, submitLogout } = useLogout();
   const { currentUser, setCurrentUser, loadCurrentUser } = useCurrentUser();
   const { dashboardData, loadProtectedDashboard } = useProtectedDashboard();
+  const { requests, loadRequests } = useRequests();
   const { employeeAreaData, loadEmployeeArea } = useEmployeeArea();
   const { adminAreaData, loadAdminArea } = useAdminArea();
   const { supervisorAreaData, loadSupervisorArea } = useSupervisorArea();
@@ -45,6 +47,7 @@ export default function App() {
 
       if (user) {
         await loadProtectedDashboard();
+        await loadRequests();
         await loadEmployeeArea();
 
         if (user.role === "admin" || user.role === "supervisor") {
@@ -82,6 +85,7 @@ export default function App() {
     if (user) {
       await loadCurrentUser();
       await loadProtectedDashboard();
+      await loadRequests();
       await loadEmployeeArea();
 
       if (user.role === "admin" || user.role === "supervisor") {
@@ -135,6 +139,7 @@ export default function App() {
           employeeMessage={employeeAreaData?.message}
           adminMessage={adminAreaData?.message}
           supervisorMessage={supervisorAreaData?.message}
+          requests={requests}
         />
       ) : (
         <LoginCard
