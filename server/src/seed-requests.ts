@@ -98,7 +98,7 @@ async function main() {
         phoneNumber: "+49 89 1234567",
         emailAddress: "s.keller@industrial-services.de",
         title: "Munich technician accommodation",
-        status: "assigned",
+        status: "open",
         dateFrom: new Date("2024-10-05"),
         dateTo: new Date("2024-10-20"),
         peopleCount: 5,
