@@ -58,6 +58,7 @@ export default function App() {
     }
 
     void initializeUserSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleToggleTheme() {

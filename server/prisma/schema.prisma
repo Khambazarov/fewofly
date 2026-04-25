@@ -14,4 +14,18 @@ model User {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  requests     Request[] @relation("RequestCreatedBy")
+}
+
+model Request {
+  id                 String   @id @default(cuid())
+  title              String
+  status             String
+  peopleCount        Int
+  locationCity       String
+  locationPostalCode String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  createdById        String
+  createdBy          User     @relation("RequestCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
 }
