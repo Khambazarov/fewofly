@@ -7,18 +7,19 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  username     String    @unique
-  passwordHash String
-  role         String
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  requests     Request[] @relation("RequestCreatedBy")
+  id                String    @id @default(cuid())
+  username          String    @unique
+  passwordHash      String
+  role              String
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  requests          Request[] @relation("RequestCreatedBy")
+  assignedRequests  Request[] @relation("RequestAssignedTo")
 }
 
 model Request {
-  id                        String   @id @default(cuid())
+  id                        String    @id @default(cuid())
   companyName               String
   contactPerson             String
   phoneNumber               String
@@ -36,8 +37,10 @@ model Request {
   mustHave                  String
   niceToHave                String
   furtherInformation        String
-  createdAt                 DateTime @default(now())
-  lastUpdated               DateTime @updatedAt
+  createdAt                 DateTime  @default(now())
+  lastUpdated               DateTime  @updatedAt
   createdById               String
-  createdBy                 User     @relation("RequestCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  assignedToId              String?
+  createdBy                 User      @relation("RequestCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  assignedTo                User?     @relation("RequestAssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
 }

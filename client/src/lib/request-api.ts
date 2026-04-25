@@ -27,6 +27,11 @@ export type RequestItem = {
     username: string;
     role: string;
   };
+  assignedTo: {
+    id: string;
+    username: string;
+    role: string;
+  } | null;
 };
 
 export async function getRequestsRequest(): Promise<RequestItem[]> {

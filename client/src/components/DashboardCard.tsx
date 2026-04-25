@@ -113,7 +113,7 @@ export default function DashboardCard({
     (request) => request.status === REQUEST_STATUSES.CLOSED,
   ).length;
   const assignedCount = requests.filter(
-    (request) => request.status === REQUEST_STATUSES.ASSIGNED,
+    (request) => request.assignedTo?.id === currentUser.id,
   ).length;
 
   return (
@@ -182,6 +182,14 @@ export default function DashboardCard({
                         <p className={mutedTextClassName}>
                           Created by:{" "}
                           <strong>{request.createdBy.username}</strong>
+                        </p>
+                        <p className={mutedTextClassName}>
+                          Assigned to:{" "}
+                          <strong>
+                            {request.assignedTo
+                              ? request.assignedTo.username
+                              : "Unassigned"}
+                          </strong>
                         </p>
                       </div>
 

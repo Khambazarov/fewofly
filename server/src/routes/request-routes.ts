@@ -17,6 +17,13 @@ requestRouter.get("/", requireAuth, async (_request, response) => {
           role: true,
         },
       },
+      assignedTo: {
+        select: {
+          id: true,
+          username: true,
+          role: true,
+        },
+      },
     },
   });
 

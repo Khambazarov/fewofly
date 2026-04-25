@@ -46,6 +46,7 @@ async function main() {
         furtherInformation:
           "We need accommodation for our assembly team during the project in Hamburg.",
         createdById: supervisor.id,
+        assignedToId: employee1.id,
       },
       {
         companyName: "Berlin Projektbau AG",
@@ -67,6 +68,7 @@ async function main() {
         furtherInformation:
           "The workers need easy access to the construction site in central Berlin.",
         createdById: admin.id,
+        assignedToId: admin.id,
       },
       {
         companyName: "Leipzig Service Team UG",
@@ -88,28 +90,30 @@ async function main() {
         furtherInformation:
           "This is a short operational stay for a mobile service team.",
         createdById: employee1.id,
+        assignedToId: employee2.id,
       },
       {
-        companyName: "Hamburg Assembly GmbH",
-        contactPerson: "Jane Smith",
-        phoneNumber: "+49 40 87654321",
-        emailAddress: "jane.smith@hamburg-assembly.de",
-        title: "Hamburg assembly team accommodation",
-        status: "open",
-        dateFrom: new Date("2024-07-01"),
-        dateTo: new Date("2024-07-15"),
-        peopleCount: 4,
-        locationCity: "Hamburg",
-        locationZIPcode: "20095",
-        locationStreet: "Mönckebergstraße 1",
-        distanceFromDestinationKm: 5,
-        budget: 30,
-        mustHave: "Hotel with conference room for team meetings.",
-        niceToHave: "Gym and wellness area.",
+        companyName: "Munich Industrial Services",
+        contactPerson: "Sophie Keller",
+        phoneNumber: "+49 89 1234567",
+        emailAddress: "s.keller@industrial-services.de",
+        title: "Munich technician accommodation",
+        status: "assigned",
+        dateFrom: new Date("2024-10-05"),
+        dateTo: new Date("2024-10-20"),
+        peopleCount: 5,
+        locationCity: "Munich",
+        locationZIPcode: "80331",
+        locationStreet: "Marienplatz 8",
+        distanceFromDestinationKm: 10,
+        budget: 40,
+        mustHave: "Parking, separate beds and late arrival.",
+        niceToHave: "Breakfast and laundry service.",
         furtherInformation:
-          "We need accommodation for our assembly team during the project in Hamburg.",
-        createdById: employee2.id,
-      }
+          "Technician team needs flexible arrival and enough parking spaces for service vehicles.",
+        createdById: supervisor.id,
+        assignedToId: employee1.id,
+      },
     ],
   });
 
