@@ -14,6 +14,23 @@ function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString("de-DE");
 }
 
+function getNightCount(dateFrom: string, dateTo: string) {
+  const from = new Date(dateFrom);
+  const to = new Date(dateTo);
+  const diffMs = to.getTime() - from.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  return diffDays > 0 ? diffDays : 0;
+}
+
+function truncateText(text: string, maxLength: number) {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  return `${text.slice(0, maxLength).trim()}...`;
+}
+
 function getStatusBadgeClassName(theme: Theme, status: string) {
   const normalizedStatus = status.toLowerCase();
 
@@ -62,8 +79,8 @@ export default function DashboardCard({
 }: DashboardCardProps) {
   const cardClassName =
     theme === "dark"
-      ? "mx-auto mt-16 max-w-3xl rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-sm"
-      : "mx-auto mt-16 max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm";
+      ? "mx-auto mt-16 max-w-5xl rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-sm"
+      : "mx-auto mt-16 max-w-5xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm";
 
   const titleClassName =
     theme === "dark"
@@ -75,6 +92,11 @@ export default function DashboardCard({
 
   const mutedTextClassName =
     theme === "dark" ? "text-xs text-slate-400" : "text-xs text-slate-500";
+
+  const helperCardClassName =
+    theme === "dark"
+      ? "rounded-xl border border-slate-700/60 bg-slate-950/40 p-4"
+      : "rounded-xl border border-slate-300/40 bg-slate-50/60 p-4";
 
   const latestRequests = requests.slice(0, 20);
 
@@ -89,6 +111,9 @@ export default function DashboardCard({
   ).length;
   const closedCount = requests.filter(
     (request) => request.status === "closed",
+  ).length;
+  const assignedCount = requests.filter(
+    (request) => request.status === "assigned",
   ).length;
 
   return (
@@ -105,30 +130,35 @@ export default function DashboardCard({
           </p>
         </div>
 
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 xl:grid-cols-6">
-          <div className="rounded-xl border border-slate-300/40 p-4">
+        <div className="grid gap-4 grid-cols-2 sm:grid-cols-6 text-center">
+          <div className={helperCardClassName}>
             <p className={textClassName}>Requests</p>
             <p className="text-xl font-semibold">{requests.length}</p>
           </div>
 
-          <div className="rounded-xl border border-slate-300/40 p-4">
+          <div className={helperCardClassName}>
             <p className={textClassName}>New</p>
             <p className="text-xl font-semibold">{newCount}</p>
           </div>
 
-          <div className="rounded-xl border border-slate-300/40 p-4">
+          <div className={helperCardClassName}>
             <p className={textClassName}>Open</p>
             <p className="text-xl font-semibold">{openCount}</p>
           </div>
 
-          <div className="rounded-xl border border-slate-300/40 p-4">
+          <div className={helperCardClassName}>
             <p className={`${textClassName} text-nowrap`}>In Progress</p>
             <p className="text-xl font-semibold">{inProgressCount}</p>
           </div>
 
-          <div className="rounded-xl border border-slate-300/40 p-4">
+          <div className={helperCardClassName}>
             <p className={textClassName}>Closed</p>
             <p className="text-xl font-semibold">{closedCount}</p>
+          </div>
+
+          <div className={helperCardClassName}>
+            <p className={textClassName}>Assigned</p>
+            <p className="text-xl font-semibold">{assignedCount}</p>
           </div>
         </div>
 
@@ -144,13 +174,14 @@ export default function DashboardCard({
                   key={request.id}
                   className="rounded-xl border border-slate-300/40 p-4"
                 >
-                  <div className="space-y-3">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="space-y-4">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                       <div className="space-y-1">
                         <p className="font-semibold">{request.title}</p>
-                        <p className={textClassName}>
-                          {request.companyName} · {request.locationCity} ·{" "}
-                          {request.peopleCount} people
+                        <p>{request.companyName}</p>
+                        <p className={mutedTextClassName}>
+                          Created by:{" "}
+                          <strong>{request.createdBy.username}</strong>
                         </p>
                       </div>
 
@@ -164,23 +195,69 @@ export default function DashboardCard({
                       </span>
                     </div>
 
-                    <div className="grid gap-2 sm:grid-cols-2">
+                    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
                       <p className={mutedTextClassName}>
-                        Created by:{" "}
-                        <strong>{request.createdBy.username}</strong>
+                        City: <strong>{request.locationCity}</strong>
                       </p>
 
                       <p className={mutedTextClassName}>
-                        Budget: <strong>{request.budget} €</strong>
+                        ZIP: <strong>{request.locationZIPcode}</strong>
                       </p>
 
                       <p className={mutedTextClassName}>
-                        From: <strong>{formatDate(request.dateFrom)}</strong>
+                        Street: <strong>{request.locationStreet}</strong>
                       </p>
 
                       <p className={mutedTextClassName}>
-                        To: <strong>{formatDate(request.dateTo)}</strong>
+                        Distance:{" "}
+                        <strong>{request.distanceFromDestinationKm} km</strong>
                       </p>
+
+                      <p className={mutedTextClassName}>
+                        People: <strong>{request.peopleCount}</strong>
+                      </p>
+
+                      <p className={mutedTextClassName}>
+                        Budget: <strong>{request.budget} € pPN</strong>
+                      </p>
+
+                      <p className={mutedTextClassName}>
+                        Date: <strong>{formatDate(request.dateFrom)}</strong>-{" "}
+                        <strong>{formatDate(request.dateTo)}</strong>
+                      </p>
+
+                      <p className={mutedTextClassName}>
+                        Duration:{" "}
+                        <strong>
+                          {getNightCount(request.dateFrom, request.dateTo)}{" "}
+                          nights
+                        </strong>
+                      </p>
+                    </div>
+
+                    <div className="grid gap-3">
+                      <div className={helperCardClassName}>
+                        <p className={mutedTextClassName}>Must have</p>
+                        <p className={textClassName}>
+                          {truncateText(request.mustHave, 100)}
+                        </p>
+                      </div>
+
+                      <div className={helperCardClassName}>
+                        <p className={mutedTextClassName}>Nice to have</p>
+                        <p className={textClassName}>
+                          {truncateText(request.niceToHave, 100)}
+                        </p>
+                      </div>
+
+                      <div className={helperCardClassName}>
+                        <p className={mutedTextClassName}>
+                          Further information
+                        </p>
+                        <p className={textClassName}>
+                          {truncateText(request.furtherInformation, 100)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
