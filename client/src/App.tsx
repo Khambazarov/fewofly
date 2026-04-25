@@ -5,6 +5,7 @@ import LoginCard from "./components/LoginCard";
 import ThemeToggleButton from "./components/ThemeToggleButton";
 import { useAdminArea } from "./hooks/useAdminArea";
 import { useCurrentUser } from "./hooks/useCurrentUser";
+import { useEmployeeArea } from "./hooks/useEmployeeArea";
 import { useLoginForm } from "./hooks/useLoginForm";
 import { useLoginRequest } from "./hooks/useLoginRequest";
 import { useLogout } from "./hooks/useLogout";
@@ -30,11 +31,11 @@ export default function App() {
     setUsernameTouched,
     setPasswordTouched,
   } = useLoginForm();
-
   const { isLoading, errorMessage, submitLogin } = useLoginRequest();
   const { isLoggingOut, submitLogout } = useLogout();
   const { currentUser, setCurrentUser, loadCurrentUser } = useCurrentUser();
   const { dashboardData, loadProtectedDashboard } = useProtectedDashboard();
+  const { employeeAreaData, loadEmployeeArea } = useEmployeeArea();
   const { adminAreaData, loadAdminArea } = useAdminArea();
   const { supervisorAreaData, loadSupervisorArea } = useSupervisorArea();
 
@@ -44,6 +45,7 @@ export default function App() {
 
       if (user) {
         await loadProtectedDashboard();
+        await loadEmployeeArea();
 
         if (user.role === "admin" || user.role === "supervisor") {
           await loadAdminArea();
@@ -56,7 +58,6 @@ export default function App() {
     }
 
     void initializeUserSession();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleToggleTheme() {
@@ -80,6 +81,7 @@ export default function App() {
     if (user) {
       await loadCurrentUser();
       await loadProtectedDashboard();
+      await loadEmployeeArea();
 
       if (user.role === "admin" || user.role === "supervisor") {
         await loadAdminArea();
@@ -129,6 +131,7 @@ export default function App() {
           onLogout={handleLogout}
           isLoggingOut={isLoggingOut}
           protectedMessage={dashboardData?.message}
+          employeeMessage={employeeAreaData?.message}
           adminMessage={adminAreaData?.message}
           supervisorMessage={supervisorAreaData?.message}
         />

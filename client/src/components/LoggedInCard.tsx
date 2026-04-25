@@ -3,6 +3,7 @@ import type { CurrentUser } from "../lib/auth-types";
 import { getRoleLabel } from "../lib/role-labels";
 import AdminAreaCard from "./AdminAreaCard";
 import DashboardCard from "./DashboardCard";
+import EmployeeAreaCard from "./EmployeeAreaCard";
 import SupervisorAreaCard from "./SupervisorAreaCard";
 
 type LoggedInCardProps = {
@@ -11,6 +12,7 @@ type LoggedInCardProps = {
   onLogout: () => void;
   isLoggingOut: boolean;
   protectedMessage?: string;
+  employeeMessage?: string;
   adminMessage?: string;
   supervisorMessage?: string;
 };
@@ -21,6 +23,7 @@ export default function LoggedInCard({
   onLogout,
   isLoggingOut,
   protectedMessage,
+  employeeMessage,
   adminMessage,
   supervisorMessage,
 }: LoggedInCardProps) {
@@ -74,6 +77,8 @@ export default function LoggedInCard({
         currentUser={currentUser}
         protectedMessage={protectedMessage}
       />
+
+      <EmployeeAreaCard theme={theme} message={employeeMessage} />
 
       {currentUser.role === "admin" || currentUser.role === "supervisor" ? (
         <AdminAreaCard theme={theme} message={adminMessage} />
