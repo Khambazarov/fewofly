@@ -7,25 +7,37 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
+  id           String    @id @default(cuid())
+  username     String    @unique
   passwordHash String
   role         String
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   requests     Request[] @relation("RequestCreatedBy")
 }
 
 model Request {
-  id                 String   @id @default(cuid())
-  title              String
-  status             String
-  peopleCount        Int
-  locationCity       String
-  locationPostalCode String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  createdById        String
-  createdBy          User     @relation("RequestCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  id                        String   @id @default(cuid())
+  companyName               String
+  contactPerson             String
+  phoneNumber               String
+  emailAddress              String
+  title                     String
+  status                    String
+  dateFrom                  DateTime
+  dateTo                    DateTime
+  peopleCount               Int
+  locationCity              String
+  locationZIPcode           String
+  locationStreet            String
+  distanceFromDestinationKm Int
+  budget                    Int
+  mustHave                  String
+  niceToHave                String
+  furtherInformation        String
+  createdAt                 DateTime @default(now())
+  lastUpdated               DateTime @updatedAt
+  createdById               String
+  createdBy                 User     @relation("RequestCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
 }

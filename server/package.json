@@ -10,6 +10,7 @@
     "lint": "echo \"lint step will be added later\"",
     "format": "echo \"format step will be added later\"",
     "seed:supervisor": "tsx src/seed-supervisor.ts",
+    "seed:requests": "tsx src/seed-requests.ts",
     "test:password": "tsx src/test-password.ts",
     "test:login": "tsx src/test-login.ts"
   },
