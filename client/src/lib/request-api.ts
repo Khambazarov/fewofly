@@ -34,6 +34,27 @@ export type RequestItem = {
   } | null;
 };
 
+export type CreateRequestInput = {
+  companyName: string;
+  contactPerson: string;
+  phoneNumber: string;
+  emailAddress: string;
+  title: string;
+  status: RequestStatus;
+  dateFrom: string;
+  dateTo: string;
+  peopleCount: number;
+  locationCity: string;
+  locationZIPcode: string;
+  locationStreet: string;
+  distanceFromDestinationKm: number;
+  budget: number;
+  mustHave: string;
+  niceToHave: string;
+  furtherInformation: string;
+  assignedToId: string;
+};
+
 export async function getRequestsRequest(): Promise<RequestItem[]> {
   const response = await fetch(`${API_BASE_URL}/requests`, {
     credentials: "include",
@@ -41,6 +62,25 @@ export async function getRequestsRequest(): Promise<RequestItem[]> {
 
   if (!response.ok) {
     throw new Error("Requests request failed");
+  }
+
+  return response.json();
+}
+
+export async function createRequestRequest(
+  input: CreateRequestInput,
+): Promise<RequestItem> {
+  const response = await fetch(`${API_BASE_URL}/requests`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error("Create request failed");
   }
 
   return response.json();
