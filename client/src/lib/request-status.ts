@@ -3,7 +3,6 @@ export const REQUEST_STATUSES = {
   OPEN: "open",
   IN_PROGRESS: "in_progress",
   CLOSED: "closed",
-  ASSIGNED: "assigned",
 } as const;
 
 export type RequestStatus =

@@ -27,6 +27,16 @@ function getNightCount(dateFrom: string, dateTo: string) {
   return diffDays > 0 ? diffDays : 0;
 }
 
+function getBudgetTotal(
+  budgetPerPerson: number,
+  peopleCount: number,
+  dateFrom: string,
+  dateTo: string,
+) {
+  const nightCount = getNightCount(dateFrom, dateTo);
+  return budgetPerPerson * peopleCount * nightCount;
+}
+
 function truncateText(text: string, maxLength: number) {
   if (text.length <= maxLength) {
     return text;
@@ -58,12 +68,6 @@ function getStatusBadgeClassName(theme: Theme, status: string) {
     return theme === "dark"
       ? "inline-flex rounded-full border border-slate-700 bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-300"
       : "inline-flex rounded-full border border-slate-300 bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700";
-  }
-
-  if (status === REQUEST_STATUSES.ASSIGNED) {
-    return theme === "dark"
-      ? "inline-flex rounded-full border border-violet-700/40 bg-violet-500/10 px-2.5 py-1 text-xs font-semibold text-violet-300"
-      : "inline-flex rounded-full border border-violet-600/30 bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700";
   }
 
   return theme === "dark"
@@ -227,6 +231,17 @@ export default function DashboardCard({
 
                       <p className={mutedTextClassName}>
                         Budget: <strong>{request.budget} € pPN</strong>
+                        {" | "}
+                        <strong>
+                          {getBudgetTotal(
+                            request.budget,
+                            request.peopleCount,
+                            request.dateFrom,
+                            request.dateTo
+                          )}{" "}
+                          €
+                        </strong>{" "}
+                        Total
                       </p>
 
                       <p className={mutedTextClassName}>
