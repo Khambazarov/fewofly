@@ -4,6 +4,7 @@ import { prisma } from "./db";
 import { authRouter } from "./routes/auth-routes";
 import { protectedRouter } from "./routes/protected-routes";
 import { requestRouter } from "./routes/request-routes";
+import { userRouter } from "./routes/user-routes";
 import { sessionMiddleware } from "./session";
 
 export function createApp() {
@@ -27,6 +28,7 @@ export function createApp() {
   app.use("/auth", authRouter);
   app.use("/protected", protectedRouter);
   app.use("/requests", requestRouter);
+  app.use("/users", userRouter);
 
   return app;
 }
