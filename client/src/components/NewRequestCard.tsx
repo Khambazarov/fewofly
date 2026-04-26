@@ -3,9 +3,11 @@ import type { Theme } from "../lib/theme";
 import { REQUEST_STATUSES } from "../lib/request-status";
 import type { CreateRequestInput } from "../lib/request-api";
 import type { AssignableUser } from "../lib/user-api";
+import { isRequestFormSubmittable } from "../lib/request-form-validation";
 
 type NewRequestCardProps = {
   theme: Theme;
+  currentUserId: string;
   assignableUsers: AssignableUser[];
   onCreateRequest: (input: CreateRequestInput) => Promise<boolean>;
   onCancel: () => void;
@@ -61,14 +63,17 @@ const initialFormState: NewRequestFormState = {
 
 export default function NewRequestCard({
   theme,
+  currentUserId,
   assignableUsers,
   onCreateRequest,
   onCancel,
   isCreating,
   createErrorMessage,
 }: NewRequestCardProps) {
-  const [formData, setFormData] =
-    useState<NewRequestFormState>(initialFormState);
+  const [formData, setFormData] = useState<NewRequestFormState>({
+    ...initialFormState,
+    assignedToId: currentUserId,
+  });
   const [touchedFields, setTouchedFields] = useState<FieldTouched>({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
@@ -172,6 +177,17 @@ export default function NewRequestCard({
 
   const fieldErrors = validateForm(formData);
 
+  const isFormSubmittable = isRequestFormSubmittable({
+    contactPerson: formData.contactPerson,
+    phoneNumber: formData.phoneNumber,
+    emailAddress: formData.emailAddress,
+    dateFrom: formData.dateFrom,
+    dateTo: formData.dateTo,
+    peopleCount: formData.peopleCount,
+    locationCity: formData.locationCity,
+    budget: formData.budget,
+  });
+
   function shouldShowFieldError(fieldName: FieldName) {
     return Boolean(
       (touchedFields[fieldName] || submitAttempted) && fieldErrors[fieldName],
@@ -209,7 +225,7 @@ export default function NewRequestCard({
       phoneNumber: formData.phoneNumber.trim(),
       emailAddress: formData.emailAddress.trim(),
       title: formData.title.trim(),
-      status: formData.status,
+      status: REQUEST_STATUSES.NEW,
       dateFrom: formData.dateFrom,
       dateTo: formData.dateTo,
       peopleCount: Number(formData.peopleCount),
@@ -227,7 +243,10 @@ export default function NewRequestCard({
     });
 
     if (success) {
-      setFormData(initialFormState);
+      setFormData({
+        ...initialFormState,
+        assignedToId: currentUserId,
+      });
       setTouchedFields({});
       setSubmitAttempted(false);
     }
@@ -246,35 +265,31 @@ export default function NewRequestCard({
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2 md:col-span-2">
-              <label className={labelClassName}>Title</label>
+              <label className={labelClassName}>
+                Title
+                <span className="ml-1 text-xs text-slate-400">(optional)</span>
+              </label>
               <input
-                className={getInputClassName(shouldShowFieldError("title"))}
+                className={getInputClassName(false)}
+                placeholder="Describe the request in one sentence"
                 value={formData.title}
                 onChange={(event) => updateField("title", event.target.value)}
-                onBlur={() => markFieldTouched("title")}
               />
-              {shouldShowFieldError("title") ? (
-                <p className="text-sm text-rose-500">{fieldErrors.title}</p>
-              ) : null}
             </div>
 
             <div className="space-y-2">
-              <label className={labelClassName}>Company name</label>
+              <label className={labelClassName}>
+                Company name
+                <span className="ml-1 text-xs text-slate-400">(optional)</span>
+              </label>
               <input
-                className={getInputClassName(
-                  shouldShowFieldError("companyName"),
-                )}
+                className={getInputClassName(false)}
+                placeholder="Enter the company name"
                 value={formData.companyName}
                 onChange={(event) =>
                   updateField("companyName", event.target.value)
                 }
-                onBlur={() => markFieldTouched("companyName")}
               />
-              {shouldShowFieldError("companyName") ? (
-                <p className="text-sm text-rose-500">
-                  {fieldErrors.companyName}
-                </p>
-              ) : null}
             </div>
 
             <div className="space-y-2">
@@ -283,6 +298,7 @@ export default function NewRequestCard({
                 className={getInputClassName(
                   shouldShowFieldError("contactPerson"),
                 )}
+                placeholder="Enter the contact person's name"
                 value={formData.contactPerson}
                 onChange={(event) =>
                   updateField("contactPerson", event.target.value)
@@ -297,11 +313,17 @@ export default function NewRequestCard({
             </div>
 
             <div className="space-y-2">
-              <label className={labelClassName}>Phone number</label>
+              <label className={labelClassName}>
+                Phone number
+                <span className="ml-1 text-xs text-slate-400">
+                  (required: phone or email)
+                </span>
+              </label>
               <input
                 className={getInputClassName(
                   shouldShowFieldError("phoneNumber"),
                 )}
+                placeholder="Enter the contact person's phone number"
                 value={formData.phoneNumber}
                 onChange={(event) =>
                   updateField("phoneNumber", event.target.value)
@@ -316,11 +338,17 @@ export default function NewRequestCard({
             </div>
 
             <div className="space-y-2">
-              <label className={labelClassName}>Email address</label>
+              <label className={labelClassName}>
+                Email address
+                <span className="ml-1 text-xs text-slate-400">
+                  (required: email or phone)
+                </span>
+              </label>
               <input
                 className={getInputClassName(
                   shouldShowFieldError("emailAddress"),
                 )}
+                placeholder="Enter the contact person's email address"
                 value={formData.emailAddress}
                 onChange={(event) =>
                   updateField("emailAddress", event.target.value)
@@ -340,6 +368,7 @@ export default function NewRequestCard({
                 className={getInputClassName(
                   shouldShowFieldError("locationCity"),
                 )}
+                placeholder="Enter the destination city"
                 value={formData.locationCity}
                 onChange={(event) =>
                   updateField("locationCity", event.target.value)
@@ -354,41 +383,33 @@ export default function NewRequestCard({
             </div>
 
             <div className="space-y-2">
-              <label className={labelClassName}>ZIP code</label>
+              <label className={labelClassName}>
+                ZIP code
+                <span className="ml-1 text-xs text-slate-400">(optional)</span>
+              </label>
               <input
-                className={getInputClassName(
-                  shouldShowFieldError("locationZIPcode"),
-                )}
+                className={getInputClassName(false)}
+                placeholder="Enter the ZIP code"
                 value={formData.locationZIPcode}
                 onChange={(event) =>
                   updateField("locationZIPcode", event.target.value)
                 }
-                onBlur={() => markFieldTouched("locationZIPcode")}
               />
-              {shouldShowFieldError("locationZIPcode") ? (
-                <p className="text-sm text-rose-500">
-                  {fieldErrors.locationZIPcode}
-                </p>
-              ) : null}
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <label className={labelClassName}>Street</label>
+              <label className={labelClassName}>
+                Street
+                <span className="ml-1 text-xs text-slate-400">(optional)</span>
+              </label>
               <input
-                className={getInputClassName(
-                  shouldShowFieldError("locationStreet"),
-                )}
+                className={getInputClassName(false)}
+                placeholder="Enter the street address"
                 value={formData.locationStreet}
                 onChange={(event) =>
                   updateField("locationStreet", event.target.value)
                 }
-                onBlur={() => markFieldTouched("locationStreet")}
               />
-              {shouldShowFieldError("locationStreet") ? (
-                <p className="text-sm text-rose-500">
-                  {fieldErrors.locationStreet}
-                </p>
-              ) : null}
             </div>
 
             <div className="space-y-2">
@@ -422,162 +443,136 @@ export default function NewRequestCard({
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
-                <label className={labelClassName}>People count</label>
-                <input
-                  type="number"
-                  className={getInputClassName(
-                    shouldShowFieldError("peopleCount"),
-                  )}
-                  value={formData.peopleCount}
-                  onChange={(event) =>
-                    updateField("peopleCount", event.target.value)
-                  }
-                  onBlur={() => markFieldTouched("peopleCount")}
-                />
-                {shouldShowFieldError("peopleCount") ? (
-                  <p className="text-sm text-rose-500">
-                    {fieldErrors.peopleCount}
-                  </p>
-                ) : null}
-              </div>
-
-              <div className="space-y-2">
-                <label className={labelClassName}>Budget (€ pPN)</label>
-                <input
-                  type="number"
-                  className={getInputClassName(shouldShowFieldError("budget"))}
-                  value={formData.budget}
-                  onChange={(event) =>
-                    updateField("budget", event.target.value)
-                  }
-                  onBlur={() => markFieldTouched("budget")}
-                />
-                {shouldShowFieldError("budget") ? (
-                  <p className="text-sm text-rose-500">{fieldErrors.budget}</p>
-                ) : null}
-              </div>
-
-              <div className="space-y-2">
-                <label className={labelClassName}>Distance in km</label>
-                <input
-                  type="number"
-                  className={getInputClassName(
-                    shouldShowFieldError("distanceFromDestinationKm"),
-                  )}
-                  value={formData.distanceFromDestinationKm}
-                  onChange={(event) =>
-                    updateField("distanceFromDestinationKm", event.target.value)
-                  }
-                  onBlur={() => markFieldTouched("distanceFromDestinationKm")}
-                />
-                {shouldShowFieldError("distanceFromDestinationKm") ? (
-                  <p className="text-sm text-rose-500">
-                    {fieldErrors.distanceFromDestinationKm}
-                  </p>
-                ) : null}
-              </div>
+          <div className="grid gap-4 md:grid-cols-4">
+            <div className="space-y-2">
+              <label className={labelClassName}>People count</label>
+              <input
+                type="number"
+                className={getInputClassName(
+                  shouldShowFieldError("peopleCount"),
+                )}
+                placeholder="Enter the number of people"
+                value={formData.peopleCount}
+                onChange={(event) =>
+                  updateField("peopleCount", event.target.value)
+                }
+                onBlur={() => markFieldTouched("peopleCount")}
+              />
+              {shouldShowFieldError("peopleCount") ? (
+                <p className="text-sm text-rose-500">
+                  {fieldErrors.peopleCount}
+                </p>
+              ) : null}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className={labelClassName}>Status</label>
-                <select
-                  className={getInputClassName(false)}
-                  value={formData.status}
-                  onChange={(event) =>
-                    updateField(
-                      "status",
-                      event.target.value as CreateRequestInput["status"],
-                    )
-                  }
-                >
-                  <option value={REQUEST_STATUSES.NEW}>New</option>
-                  <option value={REQUEST_STATUSES.OPEN}>Open</option>
-                  <option value={REQUEST_STATUSES.IN_PROGRESS}>
-                    In Progress
-                  </option>
-                  <option value={REQUEST_STATUSES.CLOSED}>Closed</option>
-                </select>
-              </div>
+            <div className="space-y-2">
+              <label className={labelClassName}>Budget (€ pPN)</label>
+              <input
+                type="number"
+                className={getInputClassName(shouldShowFieldError("budget"))}
+                placeholder="Enter the budget per person and night"
+                value={formData.budget}
+                onChange={(event) => updateField("budget", event.target.value)}
+                onBlur={() => markFieldTouched("budget")}
+              />
+              {shouldShowFieldError("budget") ? (
+                <p className="text-sm text-rose-500">{fieldErrors.budget}</p>
+              ) : null}
+            </div>
 
-              <div className="space-y-2">
-                <label className={labelClassName}>Assign to</label>
-                <select
-                  className={getInputClassName(false)}
-                  value={formData.assignedToId}
-                  onChange={(event) =>
-                    updateField("assignedToId", event.target.value)
-                  }
-                >
-                  <option value="">Unassigned</option>
-                  {assignableUsers.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.username}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="space-y-2">
+              <label className={labelClassName}>
+                Distance in km
+                <span className="ml-1 text-xs text-slate-400">(optional)</span>
+              </label>
+              <input
+                type="number"
+                className={getInputClassName(
+                  shouldShowFieldError("distanceFromDestinationKm"),
+                )}
+                placeholder="Enter the maximum distance from destination in km"
+                value={formData.distanceFromDestinationKm}
+                onChange={(event) =>
+                  updateField("distanceFromDestinationKm", event.target.value)
+                }
+                onBlur={() => markFieldTouched("distanceFromDestinationKm")}
+              />
+              {shouldShowFieldError("distanceFromDestinationKm") ? (
+                <p className="text-sm text-rose-500">
+                  {fieldErrors.distanceFromDestinationKm}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="space-y-2">
+              <label className={labelClassName}>
+                Assign to
+                <span className="ml-1 text-xs text-slate-400">(optional)</span>
+              </label>
+              <select
+                className={getInputClassName(false)}
+                value={formData.assignedToId}
+                onChange={(event) =>
+                  updateField("assignedToId", event.target.value)
+                }
+              >
+                <option value="">Unassigned</option>
+                {assignableUsers.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.username}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
           <div className="grid gap-4">
             <div className="space-y-2">
-              <label className={labelClassName}>Must have</label>
+              <label className={labelClassName}>
+                Must have
+                <span className="ml-1 text-xs text-slate-400">(optional)</span>
+              </label>
               <textarea
-                className={getInputClassName(shouldShowFieldError("mustHave"))}
+                className={getInputClassName(false)}
+                placeholder="Enter the features that are required for this request"
                 rows={3}
                 value={formData.mustHave}
                 onChange={(event) =>
                   updateField("mustHave", event.target.value)
                 }
-                onBlur={() => markFieldTouched("mustHave")}
               />
-              {shouldShowFieldError("mustHave") ? (
-                <p className="text-sm text-rose-500">{fieldErrors.mustHave}</p>
-              ) : null}
             </div>
 
             <div className="space-y-2">
-              <label className={labelClassName}>Nice to have</label>
+              <label className={labelClassName}>
+                Nice to have
+                <span className="ml-1 text-xs text-slate-400">(optional)</span>
+              </label>
               <textarea
-                className={getInputClassName(
-                  shouldShowFieldError("niceToHave"),
-                )}
+                className={getInputClassName(false)}
+                placeholder="Enter the features that are nice to have for this request"
                 rows={3}
                 value={formData.niceToHave}
                 onChange={(event) =>
                   updateField("niceToHave", event.target.value)
                 }
-                onBlur={() => markFieldTouched("niceToHave")}
               />
-              {shouldShowFieldError("niceToHave") ? (
-                <p className="text-sm text-rose-500">
-                  {fieldErrors.niceToHave}
-                </p>
-              ) : null}
             </div>
 
             <div className="space-y-2">
-              <label className={labelClassName}>Further information</label>
+              <label className={labelClassName}>
+                Further information
+                <span className="ml-1 text-xs text-slate-400">(optional)</span>
+              </label>
               <textarea
-                className={getInputClassName(
-                  shouldShowFieldError("furtherInformation"),
-                )}
+                className={getInputClassName(false)}
+                placeholder="Enter any further information relevant to this request"
                 rows={4}
                 value={formData.furtherInformation}
                 onChange={(event) =>
                   updateField("furtherInformation", event.target.value)
                 }
-                onBlur={() => markFieldTouched("furtherInformation")}
               />
-              {shouldShowFieldError("furtherInformation") ? (
-                <p className="text-sm text-rose-500">
-                  {fieldErrors.furtherInformation}
-                </p>
-              ) : null}
             </div>
           </div>
 
@@ -589,7 +584,7 @@ export default function NewRequestCard({
             <button
               type="submit"
               className={primaryButtonClassName}
-              disabled={isCreating}
+              disabled={isCreating || !isFormSubmittable}
             >
               {isCreating ? "Creating..." : "Create request"}
             </button>

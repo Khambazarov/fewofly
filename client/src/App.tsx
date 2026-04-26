@@ -171,6 +171,7 @@ export default function App() {
           {isCreateRequestOpen ? (
             <NewRequestCard
               theme={theme}
+              currentUserId={currentUser.id}
               assignableUsers={assignableUsers}
               onCreateRequest={handleCreateRequest}
               onCancel={() => setIsCreateRequestOpen(false)}

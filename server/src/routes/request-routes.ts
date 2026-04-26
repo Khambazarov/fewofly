@@ -37,7 +37,6 @@ requestRouter.post("/", requireAuth, async (request, response) => {
     phoneNumber,
     emailAddress,
     title,
-    status,
     dateFrom,
     dateTo,
     peopleCount,
@@ -56,7 +55,6 @@ requestRouter.post("/", requireAuth, async (request, response) => {
     phoneNumber?: string;
     emailAddress?: string;
     title?: string;
-    status?: string;
     dateFrom?: string;
     dateTo?: string;
     peopleCount?: number;
@@ -140,7 +138,7 @@ requestRouter.post("/", requireAuth, async (request, response) => {
       phoneNumber: phoneNumber?.trim() ?? "",
       emailAddress: emailAddress?.trim() ?? "",
       title: title?.trim() ?? "",
-      status: status?.trim() || "new",
+      status: "new",
       dateFrom: new Date(dateFrom),
       dateTo: new Date(dateTo),
       peopleCount: Number(peopleCount),
