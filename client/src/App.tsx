@@ -23,10 +23,13 @@ import {
 import { isLoginButtonDisabled } from "./lib/login-button";
 import { isLoginFormValid } from "./lib/validation";
 import type { CreateRequestInput } from "./lib/request-api";
+import type { RequestItem } from "./lib/request-api";
+import { mapRequestToEditFormState } from "./lib/request-edit-mapper";
 
 export default function App() {
   const { theme, setTheme } = useTheme();
   const [isCreateRequestOpen, setIsCreateRequestOpen] = useState(false);
+  const [editingRequestId, setEditingRequestId] = useState<string | null>(null);
 
   const {
     username,
@@ -144,6 +147,12 @@ export default function App() {
     }
   }
 
+  function handleEditRequest(request: RequestItem) {
+    const mappedRequest = mapRequestToEditFormState(request);
+    console.log("Edit request prepared:", mappedRequest);
+    setEditingRequestId(request.id);
+  }
+
   const usernameValidationMessage =
     usernameTouched && username.trim().length < 3
       ? USERNAME_VALIDATION_MESSAGE
@@ -185,6 +194,7 @@ export default function App() {
             currentUser={currentUser}
             onLogout={handleLogout}
             onOpenCreateRequest={() => setIsCreateRequestOpen(true)}
+            onEditRequest={handleEditRequest}
             isLoggingOut={isLoggingOut}
             protectedMessage={dashboardData?.message}
             employeeMessage={employeeAreaData?.message}

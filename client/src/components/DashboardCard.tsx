@@ -12,6 +12,7 @@ type DashboardCardProps = {
   currentUser: CurrentUser;
   protectedMessage?: string;
   requests: RequestItem[];
+  onEditRequest: (request: RequestItem) => void;
 };
 
 function formatDate(dateString: string) {
@@ -25,16 +26,6 @@ function getNightCount(dateFrom: string, dateTo: string) {
   const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
   return diffDays > 0 ? diffDays : 0;
-}
-
-function getBudgetTotal(
-  budgetPerPerson: number,
-  peopleCount: number,
-  dateFrom: string,
-  dateTo: string,
-) {
-  const nightCount = getNightCount(dateFrom, dateTo);
-  return budgetPerPerson * peopleCount * nightCount;
 }
 
 function truncateText(text: string, maxLength: number) {
@@ -80,6 +71,7 @@ export default function DashboardCard({
   currentUser,
   protectedMessage,
   requests,
+  onEditRequest,
 }: DashboardCardProps) {
   const cardClassName =
     theme === "dark"
@@ -101,6 +93,11 @@ export default function DashboardCard({
     theme === "dark"
       ? "rounded-xl border border-slate-700/60 bg-slate-950/40 p-4"
       : "rounded-xl border border-slate-300/40 bg-slate-50/60 p-4";
+
+  const editButtonClassName =
+    theme === "dark"
+      ? "rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-700"
+      : "rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50";
 
   const latestRequests = requests.slice(0, 20);
 
@@ -181,8 +178,10 @@ export default function DashboardCard({
                   <div className="space-y-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                       <div className="space-y-1">
-                        <p className="font-semibold">{request.title}</p>
-                        <p>{request.companyName}</p>
+                        <p className="font-semibold">
+                          {request.title || "Untitled request"}
+                        </p>
+                        <p>{request.companyName || "No company name"}</p>
                         <p className={mutedTextClassName}>
                           Created by:{" "}
                           <strong>{request.createdBy.username}</strong>
@@ -197,14 +196,24 @@ export default function DashboardCard({
                         </p>
                       </div>
 
-                      <span
-                        className={getStatusBadgeClassName(
-                          theme,
-                          request.status,
-                        )}
-                      >
-                        {formatRequestStatusLabel(request.status)}
-                      </span>
+                      <div className="flex flex-col items-start gap-3 lg:items-end">
+                        <span
+                          className={getStatusBadgeClassName(
+                            theme,
+                            request.status,
+                          )}
+                        >
+                          {formatRequestStatusLabel(request.status)}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() => onEditRequest(request)}
+                          className={editButtonClassName}
+                        >
+                          Edit
+                        </button>
+                      </div>
                     </div>
 
                     <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
@@ -213,11 +222,11 @@ export default function DashboardCard({
                       </p>
 
                       <p className={mutedTextClassName}>
-                        ZIP: <strong>{request.locationZIPcode}</strong>
+                        ZIP: <strong>{request.locationZIPcode || "—"}</strong>
                       </p>
 
                       <p className={mutedTextClassName}>
-                        Street: <strong>{request.locationStreet}</strong>
+                        Street: <strong>{request.locationStreet || "—"}</strong>
                       </p>
 
                       <p className={mutedTextClassName}>
@@ -231,17 +240,6 @@ export default function DashboardCard({
 
                       <p className={mutedTextClassName}>
                         Budget: <strong>{request.budget} € pPN</strong>
-                        {" | "}
-                        <strong>
-                          {getBudgetTotal(
-                            request.budget,
-                            request.peopleCount,
-                            request.dateFrom,
-                            request.dateTo
-                          )}{" "}
-                          €
-                        </strong>{" "}
-                        Total
                       </p>
 
                       <p className={mutedTextClassName}>
@@ -259,27 +257,40 @@ export default function DashboardCard({
                       </p>
                     </div>
 
-                    <div className="grid gap-3">
-                      <div className={helperCardClassName}>
-                        <p className={mutedTextClassName}>Must have</p>
+                    <div className="grid gap-4">
+                      <div className="space-y-2">
+                        <p className={mutedTextClassName}>
+                          Must have
+                          <span className="ml-1 text-xs text-slate-400">
+                            (optional)
+                          </span>
+                        </p>
                         <p className={textClassName}>
-                          {truncateText(request.mustHave, 100)}
+                          {truncateText(request.mustHave || "—", 100)}
                         </p>
                       </div>
 
-                      <div className={helperCardClassName}>
-                        <p className={mutedTextClassName}>Nice to have</p>
+                      <div className="space-y-2">
+                        <p className={mutedTextClassName}>
+                          Nice to have
+                          <span className="ml-1 text-xs text-slate-400">
+                            (optional)
+                          </span>
+                        </p>
                         <p className={textClassName}>
-                          {truncateText(request.niceToHave, 100)}
+                          {truncateText(request.niceToHave || "—", 100)}
                         </p>
                       </div>
 
-                      <div className={helperCardClassName}>
+                      <div className="space-y-2">
                         <p className={mutedTextClassName}>
                           Further information
+                          <span className="ml-1 text-xs text-slate-400">
+                            (optional)
+                          </span>
                         </p>
                         <p className={textClassName}>
-                          {truncateText(request.furtherInformation, 100)}
+                          {truncateText(request.furtherInformation || "—", 100)}
                         </p>
                       </div>
                     </div>

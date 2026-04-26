@@ -12,6 +12,7 @@ type LoggedInCardProps = {
   currentUser: CurrentUser;
   onLogout: () => void;
   onOpenCreateRequest: () => void;
+  onEditRequest: (request: RequestItem) => void;
   isLoggingOut: boolean;
   protectedMessage?: string;
   employeeMessage?: string;
@@ -25,6 +26,7 @@ export default function LoggedInCard({
   currentUser,
   onLogout,
   onOpenCreateRequest,
+  onEditRequest,
   isLoggingOut,
   protectedMessage,
   employeeMessage,
@@ -97,6 +99,7 @@ export default function LoggedInCard({
         currentUser={currentUser}
         protectedMessage={protectedMessage}
         requests={requests}
+        onEditRequest={onEditRequest}
       />
 
       <EmployeeAreaCard theme={theme} message={employeeMessage} />

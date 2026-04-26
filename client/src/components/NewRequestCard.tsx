@@ -266,7 +266,7 @@ export default function NewRequestCard({
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2 md:col-span-2">
               <label className={labelClassName}>
-                Title
+                Short description
                 <span className="ml-1 text-xs text-slate-400">(optional)</span>
               </label>
               <input
