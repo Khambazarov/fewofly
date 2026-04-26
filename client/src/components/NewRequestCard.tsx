@@ -115,14 +115,6 @@ export default function NewRequestCard({
   function validateForm(values: NewRequestFormState): FieldErrors {
     const errors: FieldErrors = {};
 
-    // if (!values.title.trim()) {
-    //   errors.title = "Title is required.";
-    // }
-
-    // if (!values.companyName.trim()) {
-    //   errors.companyName = "Company name is required.";
-    // }
-
     if (!values.contactPerson.trim()) {
       errors.contactPerson = "Contact person is required.";
     }
@@ -140,14 +132,6 @@ export default function NewRequestCard({
     if (!values.locationCity.trim()) {
       errors.locationCity = "City is required.";
     }
-
-    // if (!values.locationZIPcode.trim()) {
-    //   errors.locationZIPcode = "ZIP code is required.";
-    // }
-
-    // if (!values.locationStreet.trim()) {
-    //   errors.locationStreet = "Street is required.";
-    // }
 
     if (!values.dateFrom) {
       errors.dateFrom = "Date from is required.";
@@ -171,29 +155,17 @@ export default function NewRequestCard({
       errors.peopleCount = "People count must be greater than 0.";
     }
 
-    if (!values.budget.trim()) {
-      errors.budget = "Budget is required.";
-    } else if (Number(values.budget) < 0) {
-      errors.budget = "Budget cannot be negative.";
-    }
-
     if (values.distanceFromDestinationKm.trim()) {
       if (Number(values.distanceFromDestinationKm) < 0) {
         errors.distanceFromDestinationKm = "Distance cannot be negative.";
       }
     }
 
-    // if (!values.mustHave.trim()) {
-    //   errors.mustHave = "Must have is required.";
-    // }
-
-    // if (!values.niceToHave.trim()) {
-    //   errors.niceToHave = "Nice to have is required.";
-    // }
-
-    // if (!values.furtherInformation.trim()) {
-    //   errors.furtherInformation = "Further information is required.";
-    // }
+    if (!values.budget.trim()) {
+      errors.budget = "Budget is required.";
+    } else if (Number(values.budget) < 0) {
+      errors.budget = "Budget cannot be negative.";
+    }
 
     return errors;
   }
