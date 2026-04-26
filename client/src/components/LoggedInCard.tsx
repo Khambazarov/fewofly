@@ -11,6 +11,7 @@ type LoggedInCardProps = {
   theme: Theme;
   currentUser: CurrentUser;
   onLogout: () => void;
+  onOpenCreateRequest: () => void;
   isLoggingOut: boolean;
   protectedMessage?: string;
   employeeMessage?: string;
@@ -23,6 +24,7 @@ export default function LoggedInCard({
   theme,
   currentUser,
   onLogout,
+  onOpenCreateRequest,
   isLoggingOut,
   protectedMessage,
   employeeMessage,
@@ -30,7 +32,7 @@ export default function LoggedInCard({
   supervisorMessage,
   requests,
 }: LoggedInCardProps) {
-  const wrapperClassName = "mx-auto mt-16 max-w-3xl space-y-6";
+  const wrapperClassName = "mx-auto mt-16 max-w-5xl space-y-6";
 
   const topCardClassName =
     theme === "dark"
@@ -45,15 +47,20 @@ export default function LoggedInCard({
   const textClassName =
     theme === "dark" ? "text-sm text-slate-300" : "text-sm text-slate-700";
 
-  const buttonClassName =
+  const primaryButtonClassName =
     theme === "dark"
-      ? "rounded-xl bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-200 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
-      : "rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:opacity-90 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500";
+      ? "rounded-xl bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-200"
+      : "rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:opacity-90";
+
+  const secondaryButtonClassName =
+    theme === "dark"
+      ? "rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+      : "rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500";
 
   return (
     <div className={wrapperClassName}>
       <section className={topCardClassName}>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-2">
             <h2 className={titleClassName}>Logged in</h2>
             <p className={textClassName}>
@@ -64,14 +71,24 @@ export default function LoggedInCard({
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={onLogout}
-            disabled={isLoggingOut}
-            className={buttonClassName}
-          >
-            {isLoggingOut ? "Logging out..." : "Logout"}
-          </button>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={onOpenCreateRequest}
+              className={primaryButtonClassName}
+            >
+              Create New Request
+            </button>
+
+            <button
+              type="button"
+              onClick={onLogout}
+              disabled={isLoggingOut}
+              className={secondaryButtonClassName}
+            >
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </button>
+          </div>
         </div>
       </section>
 

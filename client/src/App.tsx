@@ -1,9 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AppShell from "./components/AppShell";
 import LoggedInCard from "./components/LoggedInCard";
 import LoginCard from "./components/LoginCard";
+import NewRequestCard from "./components/NewRequestCard";
 import ThemeToggleButton from "./components/ThemeToggleButton";
 import { useAdminArea } from "./hooks/useAdminArea";
+import { useAssignableUsers } from "./hooks/useAssignableUsers";
+import { useCreateRequest } from "./hooks/useCreateRequest";
 import { useCurrentUser } from "./hooks/useCurrentUser";
 import { useEmployeeArea } from "./hooks/useEmployeeArea";
 import { useLoginForm } from "./hooks/useLoginForm";
@@ -19,9 +22,12 @@ import {
 } from "./lib/messages";
 import { isLoginButtonDisabled } from "./lib/login-button";
 import { isLoginFormValid } from "./lib/validation";
+import type { CreateRequestInput } from "./lib/request-api";
 
 export default function App() {
   const { theme, setTheme } = useTheme();
+  const [isCreateRequestOpen, setIsCreateRequestOpen] = useState(false);
+
   const {
     username,
     password,
@@ -32,6 +38,7 @@ export default function App() {
     setUsernameTouched,
     setPasswordTouched,
   } = useLoginForm();
+
   const { isLoading, errorMessage, submitLogin } = useLoginRequest();
   const { isLoggingOut, submitLogout } = useLogout();
   const { currentUser, setCurrentUser, loadCurrentUser } = useCurrentUser();
@@ -40,6 +47,9 @@ export default function App() {
   const { employeeAreaData, loadEmployeeArea } = useEmployeeArea();
   const { adminAreaData, loadAdminArea } = useAdminArea();
   const { supervisorAreaData, loadSupervisorArea } = useSupervisorArea();
+  const { assignableUsers, loadAssignableUsers } = useAssignableUsers();
+  const { isCreating, createErrorMessage, submitCreateRequest } =
+    useCreateRequest();
 
   useEffect(() => {
     async function initializeUserSession() {
@@ -49,6 +59,7 @@ export default function App() {
         await loadProtectedDashboard();
         await loadRequests();
         await loadEmployeeArea();
+        await loadAssignableUsers();
 
         if (user.role === "admin" || user.role === "supervisor") {
           await loadAdminArea();
@@ -87,6 +98,7 @@ export default function App() {
       await loadProtectedDashboard();
       await loadRequests();
       await loadEmployeeArea();
+      await loadAssignableUsers();
 
       if (user.role === "admin" || user.role === "supervisor") {
         await loadAdminArea();
@@ -96,6 +108,31 @@ export default function App() {
         await loadSupervisorArea();
       }
     }
+  }
+
+  async function handleCreateRequest(
+    input: CreateRequestInput,
+  ): Promise<boolean> {
+    const result = await submitCreateRequest(input);
+
+    if (result) {
+      await loadRequests();
+      await loadProtectedDashboard();
+      await loadEmployeeArea();
+      await loadAssignableUsers();
+
+      if (currentUser?.role === "admin" || currentUser?.role === "supervisor") {
+        await loadAdminArea();
+      }
+
+      if (currentUser?.role === "supervisor") {
+        await loadSupervisorArea();
+      }
+
+      setIsCreateRequestOpen(false);
+    }
+
+    return Boolean(result);
   }
 
   async function handleLogout() {
@@ -130,17 +167,31 @@ export default function App() {
       </header>
 
       {currentUser ? (
-        <LoggedInCard
-          theme={theme}
-          currentUser={currentUser}
-          onLogout={handleLogout}
-          isLoggingOut={isLoggingOut}
-          protectedMessage={dashboardData?.message}
-          employeeMessage={employeeAreaData?.message}
-          adminMessage={adminAreaData?.message}
-          supervisorMessage={supervisorAreaData?.message}
-          requests={requests}
-        />
+        <div className="space-y-6">
+          {isCreateRequestOpen ? (
+            <NewRequestCard
+              theme={theme}
+              assignableUsers={assignableUsers}
+              onCreateRequest={handleCreateRequest}
+              onCancel={() => setIsCreateRequestOpen(false)}
+              isCreating={isCreating}
+              createErrorMessage={createErrorMessage}
+            />
+          ) : null}
+
+          <LoggedInCard
+            theme={theme}
+            currentUser={currentUser}
+            onLogout={handleLogout}
+            onOpenCreateRequest={() => setIsCreateRequestOpen(true)}
+            isLoggingOut={isLoggingOut}
+            protectedMessage={dashboardData?.message}
+            employeeMessage={employeeAreaData?.message}
+            adminMessage={adminAreaData?.message}
+            supervisorMessage={supervisorAreaData?.message}
+            requests={requests}
+          />
+        </div>
       ) : (
         <LoginCard
           theme={theme}
